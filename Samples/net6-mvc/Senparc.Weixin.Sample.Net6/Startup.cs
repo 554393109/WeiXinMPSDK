@@ -11,6 +11,7 @@ using Senparc.CO2NET.AspNet;
 using Senparc.CO2NET.Cache;
 using Senparc.CO2NET.Cache.Memcached;//DPBMARK Memcached DPBMARK_END
 using Senparc.CO2NET.Utilities;
+using Senparc.CO2NET.WebApi.WebApiEngines;
 using Senparc.NeuChar.MessageHandlers;
 using Senparc.WebSocket;//DPBMARK WebSocket DPBMARK_END
 using Senparc.Weixin.Cache.CsRedis;//DPBMARK Redis DPBMARK_END
@@ -28,6 +29,7 @@ using Senparc.Weixin.Open.ComponentAPIs;//DPBMARK Open DPBMARK_END
 using Senparc.Weixin.RegisterServices;
 using Senparc.Weixin.Sample.NetCore3.WebSocket.Hubs;//DPBMARK WebSocket DPBMARK_END
 using Senparc.Weixin.TenPay;//DPBMARK TenPay DPBMARK_END
+using Senparc.Weixin.TenPayV3;
 using Senparc.Weixin.Work;//DPBMARK Work DPBMARK_END
 using Senparc.Weixin.Work.MessageHandlers.Middleware;//DPBMARK Work DPBMARK_END
 using Senparc.Weixin.WxOpen;//DPBMARK MiniProgram DPBMARK_END
@@ -52,10 +54,10 @@ namespace Senparc.Weixin.Sample.NetCore3
         {
             services.AddSession();//使用Session（实践证明需要在配置 Mvc 之前）
 
-            services.AddControllersWithViews()
-                    .AddNewtonsoftJson();// 支持 NewtonsoftJson
-                    //.SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
-            // Add CookieTempDataProvider after AddMvc and include ViewFeatures.
+            var builder = services.AddControllersWithViews()
+                                  .AddNewtonsoftJson();// 支持 NewtonsoftJson
+                                                       //.SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
+                                                       // Add CookieTempDataProvider after AddMvc and include ViewFeatures.
             services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
 
             //如果部署在linux系统上，需要加上下面的配置：
@@ -78,7 +80,11 @@ namespace Senparc.Weixin.Sample.NetCore3
                     .AddSenparcWebSocket<CustomNetCoreWebSocketMessageHandler>() //Senparc.WebSocket 注册（按需）  -- DPBMARK WebSocket DPBMARK_END
                     ;
 
-            //services.AddCertHttpClient("name", "pwd", "path");//此处可以添加更多 Cert 证书
+            //启用 WebApi（可选）
+            services.AddAndInitDynamicApi(builder, ServerUtility.ContentRootMapPath("~/App_Data"));
+
+            //此处可以添加更多 Cert 证书
+            //services.AddCertHttpClient("name", "pwd", "path");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -263,6 +269,8 @@ namespace Senparc.Weixin.Sample.NetCore3
                              * 添加对应证书。
                              */
 
+                            .RegisterTenpayRealV3(senparcWeixinSetting.Value, "【盛派网络小助手】公众号-RealV3")//注册最新的 TenPay V3
+
                     #endregion                          // DPBMARK_END
 
                     #region 注册微信第三方平台（按需）  -- DPBMARK Open
@@ -335,9 +343,16 @@ namespace Senparc.Weixin.Sample.NetCore3
                                     }
                                 }, "【盛派网络】开放平台")
 
-                        //除此以外，仍然可以在程序任意地方注册开放平台：
-                        //ComponentContainer.Register();//命名空间：Senparc.Weixin.Open.Containers
+                            //除此以外，仍然可以在程序任意地方注册开放平台：
+                            //ComponentContainer.Register();//命名空间：Senparc.Weixin.Open.Containers
                     #endregion                          // DPBMARK_END
+
+                    #region 设置自定义 ApiHandlerWapper 参数（可选，一般不需要设置）  --DPBMARK MP
+
+                            .SetMP_InvalidCredentialValues(new[] { ReturnCode.获取access_token时AppSecret错误或者access_token无效 })
+                            //.SetMP_AccessTokenContainer_GetAccessTokenResultFunc((appId, getNewToken)=> { return xxx })
+
+                    #endregion                                                          // DPBMARK_END
 
                         ;
 
@@ -375,6 +390,9 @@ namespace Senparc.Weixin.Sample.NetCore3
 
                 //对 MessageHandler 内异步方法未提供重写时，调用同步方法（按需）
                 options.DefaultMessageHandlerAsyncEvent = DefaultMessageHandlerAsyncEvent.SelfSynicMethod;
+
+                options.EnableRequestLog = true;//默认就为 true，如需关闭日志，可设置为 false
+                options.EnbleResponseLog = true;//默认就为 true，如需关闭日志，可设置为 false
 
                 //对发生异常进行处理（可选）
                 options.AggregateExceptionCatch = ex =>

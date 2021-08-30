@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>16.12.501.1</Version>
+    <Version>16.15.500-preview1</Version>
     <AssemblyName>Senparc.Weixin.MP</AssemblyName>
     <RootNamespace>Senparc.Weixin.MP</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -502,15 +502,22 @@
 		v16.11.102 修正“将电子发票卡券插入用户卡包”接口 InvoiceApi.InsertCardToBag() 问题
 		v16.11.201 服务号订阅通知相关接口 &amp; 补充小程序[获取小程序账号的类目]接口
 		v16.12.101 修改“addTemplate选用模板”接口
+		v16.14.2
+		1、Register 提供对 ApiHandlerWapper 委托的设置方法
+		2、添加用户提交抬头后，商户会收到用户提交的事件（submit_invoice_title）
+
+		v16.15.0
+		1、接入微信支付 V3
+		2、SEnparcWeixinSetting 添加 record 能力
 </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>..\..\Senparc.Weixin.MP.BuildOutPut</OutputPath>
+    <OutputPath>..\..\BuildOutPut</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>..\..\Senparc.Weixin.MP.BuildOutPut</OutputPath>
+    <OutputPath>..\..\BuildOutPut</OutputPath>
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
     <DocumentationFile>..\..\BuildOutPut\Senparc.Weixin.MP.xml</DocumentationFile>
     <Optimize>true</Optimize>
@@ -560,9 +567,9 @@
     <PackageReference Include="System.Xml.XPath.XmlDocument" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET.APM" Version="0.10.400" />
-    <PackageReference Include="Senparc.NeuChar" Version="1.4.400" />
-    <PackageReference Include="Senparc.NeuChar.App" Version="0.10.400" />
+    <PackageReference Include="Senparc.CO2NET.APM" Version="0.11.0-preview3" />
+    <PackageReference Include="Senparc.NeuChar" Version="1.5.0-preview3" />
+    <PackageReference Include="Senparc.NeuChar.App" Version="0.11.0-preview3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Senparc.Weixin\Senparc.Weixin\Senparc.Weixin.net6.csproj" />
