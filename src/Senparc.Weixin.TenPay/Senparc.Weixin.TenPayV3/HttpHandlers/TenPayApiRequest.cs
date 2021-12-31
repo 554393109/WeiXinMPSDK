@@ -29,6 +29,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     修改标识：Senparc - 20210822
     修改描述：重构使用ISenparcWeixinSettingForTenpayV3初始化实例
+
+    修改标识：Senparc - 20211225
+    修改描述：v0.5.2 发布版本删除调试代码
     
 ----------------------------------------------------------------*/
 
@@ -39,7 +42,6 @@ using Senparc.Weixin.Entities;
 using Senparc.Weixin.Helpers;
 using Senparc.Weixin.TenPayV3.Apis.Entities;
 using Senparc.Weixin.TenPayV3.Helpers;
-using Senparc.Weixin.TenPayV3.HttpHandlers;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -121,6 +123,11 @@ namespace Senparc.Weixin.TenPayV3
                         responseMessage = await client.GetAsync(url);
                         WeixinTrace.Log(url); //记录Get的Json数据
                         break;
+                    //TODO: 此处新增DELETE方法 待测试是否有问题
+                    case ApiRequestMethod.DELETE:
+                        responseMessage = await client.DeleteAsync(url);
+                        WeixinTrace.Log(url); //记录Delete的Json数据
+                        break;
                     case ApiRequestMethod.POST:
                     case ApiRequestMethod.PUT:
                     case ApiRequestMethod.PATCH:
@@ -178,6 +185,10 @@ namespace Senparc.Weixin.TenPayV3
 
                 //获取响应结果
                 string content = await responseMessage.Content.ReadAsStringAsync();//TODO:如果不正确也要返回详情
+
+#if DEBUG
+                Console.WriteLine("Content:" + content + ",,Headers:" + responseMessage.Headers.ToString());
+#endif
 
                 //检查响应代码
                 TenPayApiResultCode resutlCode = TenPayApiResultCode.TryGetCode(responseMessage.StatusCode, content);
