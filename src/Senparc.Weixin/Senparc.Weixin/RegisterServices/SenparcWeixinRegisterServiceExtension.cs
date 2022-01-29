@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2021 Senparc
+    Copyright (C) 2022 Senparc
 
     文件名：RegisterServiceExtension.cs
     文件功能描述：快捷注册类，RegisterService 扩展类
@@ -56,7 +56,7 @@ namespace Senparc.Weixin.RegisterServices
     /// </summary>
     public static class RegisterServiceExtension
     {
-#if !NET45
+#if !NET451
         /// <summary>
         /// 注册 IServiceCollection，并返回 RegisterService，开始注册流程
         /// </summary>

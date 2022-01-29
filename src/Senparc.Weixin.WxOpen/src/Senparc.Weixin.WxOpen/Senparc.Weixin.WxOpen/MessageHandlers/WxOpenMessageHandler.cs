@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2021 Senparc
+    Copyright (C) 2022 Senparc
     
     文件名：WxOpenMessageHandler.cs
     文件功能描述：小程序MessageHandler
@@ -74,11 +74,6 @@ namespace Senparc.Weixin.WxOpen.MessageHandlers
         where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
     {
         #region 属性设置
-
-        /// <summary>
-        /// 原始的加密请求（如果不加密则为null）
-        /// </summary>
-        public XDocument EcryptRequestDocument { get; set; }
 
         /// <summary>
         /// 请求实体
@@ -136,11 +131,6 @@ namespace Senparc.Weixin.WxOpen.MessageHandlers
         #endregion
 
         #region 构造函数
-
-        /// <summary>
-        /// 动态去重判断委托，仅当返回值为false时，不使用消息去重功能
-        /// </summary>
-        public Func<IRequestMessageBase, bool> OmitRepeatedMessageFunc = null;
 
         /// <summary>
         /// 小程序MessageHandler构造函数

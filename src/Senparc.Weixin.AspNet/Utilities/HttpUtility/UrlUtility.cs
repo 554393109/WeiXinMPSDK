@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2021 Senparc
+    Copyright (C) 2022 Senparc
 
     文件名：UrlUtility.cs
     文件功能描述：URL工具类
@@ -51,7 +51,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Senparc.CO2NET.Extensions;
-#if NET45
+#if NET451
 using System.Web;
 #else
 using System.Net.Http;
@@ -73,14 +73,14 @@ namespace Senparc.Weixin.AspNetHttpUtility
         /// <param name="httpContext"></param>
         /// <param name="oauthCallbackUrl"></param>
         /// <returns></returns>
-#if NET45
+#if NET451
         public static string GenerateOAuthCallbackUrl(HttpContextBase httpContext, string oauthCallbackUrl)
 #else
         public static string GenerateOAuthCallbackUrl(HttpContext httpContext, string oauthCallbackUrl)
 #endif
         {
 
-#if NET45
+#if NET451
 
             if (httpContext.Request.Url == null)
             {

@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2021 Senparc
+    Copyright (C) 2022 Senparc
     
     文件名：TemplateDataItem.cs
     文件功能描述：模板消息的数据项类型
@@ -29,6 +29,10 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     
     修改标识：Senparc - 20150303
     修改描述：整理接口
+
+    修改标识：Senparc - 20210807
+    修改描述：v16.14.1 提供不带参数的构造函数
+
 ----------------------------------------------------------------*/
 
 namespace Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage
@@ -57,5 +61,7 @@ namespace Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage
             value = v;
             color = c;
         }
+
+        public TemplateDataItem() { }
     }
 }

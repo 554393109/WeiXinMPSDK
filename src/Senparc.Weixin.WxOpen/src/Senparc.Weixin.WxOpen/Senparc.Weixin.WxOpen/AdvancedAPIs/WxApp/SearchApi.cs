@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2021 Senparc
+    Copyright (C) 2022 Senparc
     
     文件名：SearchApi.cs
     文件功能描述：小程序搜索
@@ -21,6 +21,7 @@ namespace Senparc.Weixin.WxOpen.AdvancedAPIs.WxApp
     /// <summary>
     /// 小程序搜索
     /// </summary>
+    [NcApiBind(NeuChar.PlatformType.WeChat_MiniProgram, true)]
     public static class SearchApi
     {
         #region 同步方法
@@ -31,7 +32,6 @@ namespace Senparc.Weixin.WxOpen.AdvancedAPIs.WxApp
         /// <param name="pages">小程序页面信息列表</param>
         /// <param name="timeOut"></param>
         /// <returns></returns>
-        [ApiBind(NeuChar.PlatformType.WeChat_MiniProgram, "Search.SubmitPages", true)]
         public static WxJsonResult SubmitPages(string accessTokenOrAppId, List<Page> pages, int timeOut = Config.TIME_OUT)
         {
             return WxOpenApiHandlerWapper.TryCommonApi(accessToken =>
@@ -55,7 +55,6 @@ namespace Senparc.Weixin.WxOpen.AdvancedAPIs.WxApp
         /// <param name="pages">小程序页面信息列表</param>
         /// <param name="timeOut"></param>
         /// <returns></returns>
-        [ApiBind(NeuChar.PlatformType.WeChat_MiniProgram, "Search.SubmitPagesAsync", true)]
         public static async Task<WxJsonResult> SubmitPagesAsync(string accessTokenOrAppId, List<Page> pages, int timeOut = Config.TIME_OUT)
         {
             return await WxOpenApiHandlerWapper.TryCommonApiAsync(async accessToken =>

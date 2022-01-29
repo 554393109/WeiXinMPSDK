@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2021 Senparc
+    Copyright (C) 2022 Senparc
 
     文件名：WeixinController.cs
     文件功能描述：用于处理微信回调的信息
@@ -28,7 +28,7 @@ using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Senparc.Weixin.MP.Entities.Request;
 
-namespace Senparc.Weixin.Sample.NetCore3.Controllers
+namespace Senparc.Weixin.Sample.Net6.Controllers
 {
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Options;
@@ -41,8 +41,8 @@ namespace Senparc.Weixin.Sample.NetCore3.Controllers
     using Senparc.Weixin.HttpUtility;
     using Senparc.Weixin.MP;
     using Senparc.Weixin.MP.MvcExtension;
-    using Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler;
-    using Senparc.Weixin.MP.Sample.CommonService.Utilities;
+    using Senparc.Weixin.Sample.CommonService.CustomMessageHandler;
+    using Senparc.Weixin.Sample.CommonService.Utilities;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -87,10 +87,8 @@ namespace Senparc.Weixin.Sample.NetCore3.Controllers
         /// </summary>
         [HttpPost]
         [ActionName("Index")]
-        public ActionResult Post(PostModel postModel)
+        public async Task<ActionResult> Post(PostModel postModel)
         {
-            /* 异步请求请见 WeixinAsyncController（推荐） */
-
             if (!CheckSignature.Check(postModel.Signature, postModel.Timestamp, postModel.Nonce, Token))
             {
                 return Content("参数错误！");
@@ -123,7 +121,8 @@ namespace Senparc.Weixin.Sample.NetCore3.Controllers
             {
                 messageHandler.SaveRequestMessageLog();//记录 Request 日志（可选）
 
-                messageHandler.Execute();//执行微信处理过程（关键）
+                var ct = new CancellationToken();
+                await messageHandler.ExecuteAsync(ct);//执行微信处理过程（关键）
 
                 messageHandler.SaveResponseMessageLog();//记录 Response 日志（可选）
 
@@ -183,7 +182,7 @@ namespace Senparc.Weixin.Sample.NetCore3.Controllers
 
             var messageHandler = new CustomMessageHandler(Request.GetRequestMemoryStream(), postModel, 10);
 
-            messageHandler.Execute();//执行微信处理过程
+            messageHandler.Execute();//执行微信处理过程（推荐使用异步方法）
 
             //return Content(messageHandler.ResponseDocument.ToString());//v0.7-
             //return new WeixinResult(messageHandler);//v0.8+

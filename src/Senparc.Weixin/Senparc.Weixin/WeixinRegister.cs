@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2021 Senparc
+    Copyright (C) 2022 Senparc
 
     文件名：WeixinRegister.cs
     文件功能描述：Senparc.Weixin 快捷注册流程（包括Thread、TraceLog等）
@@ -166,8 +166,8 @@ namespace Senparc.Weixin
 
             /* 扩展缓存注册结束 */
 
-            //ApiBind 自动扫描
-            Senparc.NeuChar.Register.RegisterApiBind(false);
+            //注册 NeuChar
+            Senparc.NeuChar.Register.AddNeuChar();
 
             return registerService;
         }

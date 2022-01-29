@@ -6,13 +6,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Senparc.Weixin.Sample.NetCore3.Controllers
+namespace Senparc.Weixin.Sample.Net6.Controllers
 {
     public class CaseCollectionController : BaseController
     {
-        private readonly IHostingEnvironment _env;
+        private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _env;
 
-        public CaseCollectionController(IHostingEnvironment env)
+        public CaseCollectionController(Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
         {
             this._env = env;
         }

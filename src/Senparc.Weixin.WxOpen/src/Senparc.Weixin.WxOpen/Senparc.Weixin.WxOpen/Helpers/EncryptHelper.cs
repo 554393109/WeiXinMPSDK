@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2021 Senparc
+    Copyright (C) 2022 Senparc
     
     文件名：EncryptHelper.cs
     文件功能描述：加密、解密处理类
@@ -46,7 +46,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Senparc.CO2NET.Helpers;
-#if NET45
+#if NET451
 using System.Web.Script.Serialization;
 #endif
 using Senparc.Weixin.Exceptions;
@@ -105,12 +105,12 @@ namespace Senparc.Weixin.WxOpen.Helpers
             var sessionBag = SessionContainer.GetSession(sessionId);
             if (sessionBag == null)
             {
-                throw new WxOpenException("SessionId无效");
+                throw new WxOpenException("SessionId无效（01）");
             }
 
             if (string.IsNullOrEmpty(sessionBag.SessionKey))
             {
-                throw new WxOpenException("SessionKey无效");
+                throw new WxOpenException("SessionKey无效（02）");
             }
 
             var signature = GetSignature(rawData, sessionBag.SessionKey);
@@ -125,7 +125,7 @@ namespace Senparc.Weixin.WxOpen.Helpers
 
         private static byte[] AES_Decrypt(String Input, byte[] Iv, byte[] Key)
         {
-#if NET45
+#if NET451
             RijndaelManaged aes = new RijndaelManaged();
 #else
             SymmetricAlgorithm aes = Aes.Create();

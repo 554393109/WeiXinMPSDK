@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2021 Senparc
+    Copyright (C) 2022 Senparc
     
     文件名：RequestMessageEvent_MassSendJobFinish.cs
     文件功能描述：事件之推送群发结果
@@ -140,14 +140,12 @@ namespace Senparc.Weixin.MP.Entities
         /// </summary>
         public long MsgID
         {
-            get { return this._MsgID; }
+            get { return base.MsgId; }
             set
             {
                 base.MsgId = value;
-                this._MsgID = value;
             }
         }
-        private long _MsgID;
 
         [Obsolete("请使用MsgID")]
         public new long MsgId { get; set; }

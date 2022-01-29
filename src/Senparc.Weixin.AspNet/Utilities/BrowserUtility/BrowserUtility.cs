@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2021 Senparc
+    Copyright (C) 2022 Senparc
 
     文件名：BrowserUtility.cs
     文件功能描述：浏览器公共类
@@ -68,7 +68,7 @@ namespace Senparc.Weixin.BrowserUtility
         /// </summary>
         /// <param name="httpContext">HttpContextBase对象</param>
         /// <returns>true：在微信内置浏览器内。false：不在微信内置浏览器内。</returns>
-#if NET45
+#if NET451
         public static bool SideInWeixinBrowser(this HttpContextBase httpContext)
 #else
         public static bool SideInWeixinBrowser(this HttpContext httpContext)
@@ -87,7 +87,7 @@ namespace Senparc.Weixin.BrowserUtility
         /// </summary>
         /// <param name="httpContext">HttpContextBase对象</param>
         /// <returns>true：在微信内置浏览器内。false：不在微信内置浏览器内。</returns>
-#if NET45
+#if NET451
         public static bool SideInWeixinMiniProgram(this HttpContextBase httpContext)
 #else
         public static bool SideInWeixinMiniProgram(this HttpContext httpContext)

@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2021 Senparc
+    Copyright (C) 2022 Senparc
     
     文件名：Config.cs
     文件功能描述：全局设置
@@ -137,16 +137,8 @@ namespace Senparc.Weixin
         /// 公众号（小程序）、开放平台【文件下载】 API 的服务器地址（默认为：https://api.weixin.qq.com）
         /// <para>2020年9月15日停止使用http://file.api.weixin.qq.com域名：https://developers.weixin.qq.com/community/develop/doc/0002245dcdc8c06f36fa6a47d56400</para>
         /// </summary>
-        private static string _apiMpFileHost = "https://api.weixin.qq.com";
-        /// <summary>
-        /// 公众号（小程序）、开放平台【文件下载】 API 的服务器地址（默认为：https://api.weixin.qq.com）
-        /// <para>2020年9月15日停止使用http://file.api.weixin.qq.com域名：https://developers.weixin.qq.com/community/develop/doc/0002245dcdc8c06f36fa6a47d56400</para>
-        /// </summary>
-        public static string ApiMpFileHost
-        {
-            get { return _apiMpFileHost; }
-            set { _apiMpFileHost = value; }
-        }
+        public static string ApiMpFileHost { get; set; } = "https://api.weixin.qq.com";
+
         #endregion
 
         #region 企业微信API的服务器地址（默认为：https://qyapi.weixin.qq.com）

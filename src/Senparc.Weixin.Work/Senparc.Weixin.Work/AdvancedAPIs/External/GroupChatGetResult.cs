@@ -21,7 +21,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2021 Senparc
+    Copyright (C) 2022 Senparc
   
     文件名：GroupChatGetResult.cs
     文件功能描述：获取客户群详情 返回结果
@@ -98,6 +98,18 @@ namespace Senparc.Weixin.Work.AdvancedAPIs.External
         ///     群成员id
         /// </summary>
         public string userid { get; set; }
+
+        /// <summary>
+        ///     在群里的昵称
+        /// </summary>
+        public string group_nickname { get; set; }
+
+        /// <summary>
+        ///     名字。仅当 need_name = 1 时返回
+        ///     如果是微信用户，则返回其在微信中设置的名字
+        ///     如果是企业微信联系人，则返回其设置对外展示的别名或实名
+        /// </summary>
+        public string name { get; set; }
 
         /// <summary>
         ///     成员类型。

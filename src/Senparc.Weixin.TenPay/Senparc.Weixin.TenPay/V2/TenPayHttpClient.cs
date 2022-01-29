@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2021 Senparc
+    Copyright (C) 2022 Senparc
  
     文件名：TenPayHttpClient.cs
     文件功能描述：微信支付http、https通信类
@@ -230,7 +230,7 @@ namespace Senparc.Weixin.TenPay.V2
         /// <returns></returns>
         public bool Call()
         {
-#if NET45
+#if NET451
                         StreamReader sr = null;
             HttpWebResponse wr = null;
 

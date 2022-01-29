@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2021 Senparc
+    Copyright (C) 2022 Senparc
   
     文件名：RequestMessageFactory.cs
     文件功能描述：获取XDocument转换后的IRequestMessageBase实例
@@ -36,6 +36,7 @@ using Senparc.NeuChar;
 using Senparc.NeuChar.Helpers;
 using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
+using Senparc.CO2NET;
 
 namespace Senparc.Weixin.Work
 {
