@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2022 Senparc
+    Copyright (C) 2023 Senparc
     
     文件名：RequestMessageEvent_SysApprovalChange.cs
     文件功能描述：系统审批申请状态变化回调通知
@@ -149,7 +149,7 @@ namespace Senparc.Weixin.Work.Entities
         /// <summary>
         /// 节点分支审批人审批操作时间，0为尚未操作
         /// </summary>
-        public byte SpTime { get; set; }
+        public uint SpTime { get; set; }
 
         /// <summary>
         /// 节点分支审批人审批意见附件，赋值为media_id具体使用请参考：<see href="https://developer.work.weixin.qq.com/document/path/90254">文档-获取临时素材</see>

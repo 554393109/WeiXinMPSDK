@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2022 Senparc
+    Copyright (C) 2023 Senparc
     
     文件名：CustomMessageHandler_Events.cs
     文件功能描述：自定义MessageHandler
@@ -114,7 +114,16 @@ QQ群：377815480
         public override async Task<IResponseMessageBase> OnEvent_ClickRequestAsync(RequestMessageEvent_Click requestMessage)
         {
             var reponseMessage = CreateResponseMessage<ResponseMessageText>();
-            reponseMessage.Content = "您点击了按钮：" + requestMessage.EventName;
+
+            if (requestMessage.EventKey == "OneClick")
+            {
+                reponseMessage.Content = "您点击了【单击测试】按钮";
+            }
+            else
+            {
+                reponseMessage.Content = "您点击了其他事件按钮";
+            }
+
             return reponseMessage;
         }
 
