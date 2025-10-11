@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：WorkCustomMessageHandler.cs
     文件功能描述：自定义WorkMessageHandler
@@ -8,7 +8,6 @@
     创建标识：Senparc - 20150312
 ----------------------------------------------------------------*/
 
-//DPBMARK_FILE Work
 using System;
 using System.Collections.Generic;
 using System.IO;

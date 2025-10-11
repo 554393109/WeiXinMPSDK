@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
 
     文件名：CustomMessageHandler.cs
     文件功能描述：微信公众号自定义MessageHandler
@@ -15,7 +15,6 @@
 
 ----------------------------------------------------------------*/
 
-//DPBMARK_FILE MP
 using Senparc.CO2NET.Helpers;
 using Senparc.CO2NET.Utilities;
 using Senparc.NeuChar.Agents;
@@ -127,7 +126,7 @@ namespace Senparc.Weixin.Sample.CommonService.CustomMessageHandler
         {
             //说明：实际项目中这里的逻辑可以交给Service处理具体信息，参考OnLocationRequest方法或/Service/LocationSercice.cs
 
-            #region 书中例子 
+            #region 《微信开发深度解析》书中例子 
             //if (requestMessage.Content == "你好")
             //{
             //    var responseMessage = base.CreateResponseMessage<ResponseMessageNews>();
@@ -173,10 +172,27 @@ namespace Senparc.Weixin.Sample.CommonService.CustomMessageHandler
 
             #endregion
 
+
+            #region 查看是否需要进入 AI 对话
+
+            var aiResponseMessage = await this.AIChatAsync(requestMessage);
+            if (aiResponseMessage != null)
+            {
+                return aiResponseMessage;
+            }
+
+            #endregion
+
+
             var defaultResponseMessage = base.CreateResponseMessage<ResponseMessageText>();
 
             var requestHandler = await requestMessage.StartHandler()
-                //关键字不区分大小写，按照顺序匹配成功后将不再运行下面的逻辑
+                /* 关键字不区分大小写，按照顺序匹配成功后将不再运行下面的逻辑 */
+
+                //启动 AI 对话
+                .Keyword("AI", () => this.StartAIChatAsync().Result)
+
+                //测试浏览器约束
                 .Keyword("约束", () =>
                 {
                     defaultResponseMessage.Content =
@@ -185,9 +201,10 @@ namespace Senparc.Weixin.Sample.CommonService.CustomMessageHandler
 或：
 <a href=""https://sdk.weixin.senparc.com/FilterTest/Redirect"">点击这里</a>进行客户端约束测试（地址：https://sdk.weixin.senparc.com/FilterTest/Redirect），如果在微信外打开将重定向一次URL。";
                     return defaultResponseMessage;
-                }).
+                })
+
                 //匹配任一关键字
-                Keywords(new[] { "托管", "代理" }, () =>
+                .Keywords(new[] { "托管", "代理" }, () =>
                 {
                     //开始用代理托管，把请求转到其他服务器上去，然后拿回结果
                     //甚至也可以将所有请求在DefaultResponseMessage()中托管到外部。
@@ -245,13 +262,15 @@ namespace Senparc.Weixin.Sample.CommonService.CustomMessageHandler
                     }
                     return agentResponseMessage;//可能出现多种类型，直接在这里返回
                 })
+
+                //命中任意一个关键字即可触发
                 .Keywords(new[] { "测试", "退出" }, () =>
                 {
                     /*
                      * 这是一个特殊的过程，此请求通常来自于微微嗨（http://www.weiweihi.com）的“盛派网络小助手”应用请求（https://www.weiweihi.com/User/App/Detail/1），
                      * 用于演示微微嗨应用商店的处理过程，由于微微嗨的应用内部可以单独设置对话过期时间，所以这里通常不需要考虑对话状态，只要做最简单的响应。
                      */
-                    if (defaultResponseMessage.Content == "测试")
+                    if (requestMessage.Content == "测试")
                     {
                         //进入APP测试
                         defaultResponseMessage.Content = "您已经进入【盛派网络小助手】的测试程序，请发送任意信息进行测试。发送文字【退出】退出测试对话。10分钟内无任何交互将自动退出应用对话状态。";
@@ -375,8 +394,6 @@ namespace Senparc.Weixin.Sample.CommonService.CustomMessageHandler
                     defaultResponseMessage.Content = sb.ToString();
                     return defaultResponseMessage;
                 })
-
-
                 //选择菜单，关键字：101（微信服务器端最终格式：id="s:101",content="满意"）
                 .SelectMenuKeyword("101", () =>
                 {
@@ -449,8 +466,7 @@ namespace Senparc.Weixin.Sample.CommonService.CustomMessageHandler
                     var currentMessageContext = await base.GetCurrentMessageContext();
                     if (currentMessageContext.RequestMessages.Count > 1)
                     {
-                        result.AppendFormat("您此前还发送了如下消息（{0}/{1}）：\r\n", currentMessageContext.RequestMessages.Count,
-                            currentMessageContext.StorageData);
+                        result.AppendFormat("您此前还发送了如下消息（{0}）：\r\n", currentMessageContext.RequestMessages.Count);
                         for (int i = currentMessageContext.RequestMessages.Count - 2; i >= 0; i--)
                         {
                             var historyMessage = currentMessageContext.RequestMessages[i];
@@ -505,6 +521,8 @@ namespace Senparc.Weixin.Sample.CommonService.CustomMessageHandler
         /// <returns></returns>
         public override async Task<IResponseMessageBase> OnImageRequestAsync(RequestMessageImage requestMessage)
         {
+            
+
             //一隔一返回News或Image格式
             if (base.GlobalMessageContext.GetMessageContext(requestMessage).RequestMessages.Count() % 2 == 0)
             {

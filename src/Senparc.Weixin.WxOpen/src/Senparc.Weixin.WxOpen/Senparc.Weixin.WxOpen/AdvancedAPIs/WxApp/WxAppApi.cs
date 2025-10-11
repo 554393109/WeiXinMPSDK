@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2023 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2025 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：WxAppApi.cs
     文件功能描述：小程序WxApp目录下面的接口
@@ -50,6 +50,12 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     修改标识：mojinxun - 20230219
     修改描述：v3.15.13 添加“文本内容安全识别”接口
+
+    修改标识：mojinxun - 20250523
+    修改描述：Feature/wxacode unlimit参数修改（PR #3133）
+
+    修改标识：blackWins - 20250608
+    修改描述：完善小程序二维码的获取结果处理（PR #3141）
 
 ----------------------------------------------------------------*/
 
@@ -82,6 +88,19 @@ namespace Senparc.Weixin.WxOpen.AdvancedAPIs.WxApp
         #region 同步方法
 
         /// <summary>
+        /// 将提供的流的内容转换为 <see cref="WxJsonResult"/> 对象
+        /// </summary>
+        /// <param name="stream">包含要反序列化的JSON数据的输入流</param>
+        /// <returns> <see cref="WxJsonResult"/> 从流的JSON内容反序列化的对象</returns>
+        private static WxJsonResult ToWxJsonResult(Stream stream)
+        {
+            stream.Position = 0;
+            using StreamReader streamReader = new StreamReader(stream);
+            var errorInfo = streamReader.ReadToEnd();
+            return errorInfo.GetObject<WxJsonResult>();
+        }
+
+        /// <summary>
         /// 获取小程序页面的小程序码
         /// </summary>
         /// <param name="accessTokenOrAppId">AccessToken或AppId（推荐使用AppId，需要先注册）</param>
@@ -110,7 +129,8 @@ namespace Senparc.Weixin.WxOpen.AdvancedAPIs.WxApp
                 JsonSetting jsonSetting = new JsonSetting(true);
                 Post.Download(CommonDI.CommonSP, url, SerializerHelper.GetJsonString(data, jsonSetting), stream);
 
-                return new WxJsonResult()
+                return stream.Length < 1024 ?
+                ToWxJsonResult(stream) : new WxJsonResult()
                 {
                     errcode = ReturnCode.请求成功
                 };
@@ -153,7 +173,7 @@ namespace Senparc.Weixin.WxOpen.AdvancedAPIs.WxApp
         /// <param name="accessTokenOrAppId">AccessToken或AppId（推荐使用AppId，需要先注册）</param>
         /// <param name="stream">储存小程序码的流</param>
         /// <param name="scene">最大32个可见字符，只支持数字，大小写英文以及部分特殊字符：!#$&'()*+,/:;=?@-._~，其它字符请自行编码为合法字符（因不支持%，中文无法使用 urlencode 处理，请使用其他编码方式）</param>
-        /// <param name="page">必须是已经发布的小程序页面，例如 "pages/index/index" ,根路径前不要填加'/',不能携带参数（参数请放在scene字段里），如果不填写这个字段，默认跳主页面</param>
+        /// <param name="page">默认是主页，页面 page，例如 pages/index/index，根路径前不要填加 /，不能携带参数（参数请放在scene字段里），如果不填写这个字段，默认跳主页面。scancode_time为系统保留参数，不允许配置</param>
         /// <param name="check_path">[选填]检查page 是否存在，为 true 时 page 必须是已经发布的小程序存在的页面（否则报错）；为 false 时允许小程序未发布或者 page 不存在， 但page 有数量上限（60000个）请勿滥用</param>
         /// <param name="env_version">[选填]要打开的小程序版本,默认为"release"。正式版为 "release"，体验版为 "trial"，开发版为 "develop"</param>
         /// <param name="width">[选填]小程序码的宽度</param>
@@ -189,7 +209,8 @@ namespace Senparc.Weixin.WxOpen.AdvancedAPIs.WxApp
                 JsonSetting jsonSetting = new JsonSetting(true);
                 Post.Download(CommonDI.CommonSP, url, SerializerHelper.GetJsonString(data, jsonSetting), stream);
 
-                return new WxJsonResult()
+                return stream.Length < 1024 ?
+                ToWxJsonResult(stream) : new WxJsonResult()
                 {
                     errcode = ReturnCode.请求成功
                 };
@@ -246,7 +267,8 @@ namespace Senparc.Weixin.WxOpen.AdvancedAPIs.WxApp
                 var data = new { path = path, width = width };
                 Post.Download(CommonDI.CommonSP, url, SerializerHelper.GetJsonString(data), stream);
 
-                return new WxJsonResult()
+                return stream.Length < 1024 ?
+                ToWxJsonResult(stream) : new WxJsonResult()
                 {
                     errcode = ReturnCode.请求成功
                 };
@@ -931,6 +953,19 @@ namespace Senparc.Weixin.WxOpen.AdvancedAPIs.WxApp
         #region 异步方法
 
         /// <summary>
+        /// 【异步方法】将提供的流的内容转换为 <see cref="WxJsonResult"/> 对象
+        /// </summary>
+        /// <param name="stream">包含要反序列化的JSON数据的输入流</param>
+        /// <returns> <see cref="WxJsonResult"/> 从流的JSON内容反序列化的对象</returns>
+        private static async Task<WxJsonResult> ToWxJsonResultAsync(Stream stream)
+        {
+            stream.Position = 0;
+            using StreamReader streamReader = new StreamReader(stream);
+            var errorInfo = await streamReader.ReadToEndAsync();
+            return errorInfo.GetObject<WxJsonResult>();
+        }
+
+        /// <summary>
         /// 【异步方法】获取小程序页面的小程序码
         /// </summary>
         /// <param name="accessTokenOrAppId">AccessToken或AppId（推荐使用AppId，需要先注册）</param>
@@ -967,7 +1002,7 @@ namespace Senparc.Weixin.WxOpen.AdvancedAPIs.WxApp
         /// <param name="accessTokenOrAppId">AccessToken或AppId（推荐使用AppId，需要先注册）</param>
         /// <param name="stream">储存小程序码的流</param>
         /// <param name="scene">最大32个可见字符，只支持数字，大小写英文以及部分特殊字符：!#$&'()*+,/:;=?@-._~，其它字符请自行编码为合法字符（因不支持%，中文无法使用 urlencode 处理，请使用其他编码方式）</param>
-        /// <param name="page">必须是已经发布的小程序页面，例如 "pages/index/index" ,根路径前不要填加'/',不能携带参数（参数请放在scene字段里），如果不填写这个字段，默认跳主页面</param>
+        /// <param name="page">默认是主页，页面 page，例如 pages/index/index，根路径前不要填加 /，不能携带参数（参数请放在scene字段里），如果不填写这个字段，默认跳主页面。scancode_time为系统保留参数，不允许配置</param>
         /// <param name="check_path">[选填]检查page 是否存在，为 true 时 page 必须是已经发布的小程序存在的页面（否则报错）；为 false 时允许小程序未发布或者 page 不存在， 但page 有数量上限（60000个）请勿滥用</param>
         /// <param name="env_version">[选填]要打开的小程序版本,默认为"release"。正式版为 "release"，体验版为 "trial"，开发版为 "develop"</param>
         /// <param name="width">小程序码的宽度</param>
@@ -1003,10 +1038,11 @@ namespace Senparc.Weixin.WxOpen.AdvancedAPIs.WxApp
                 JsonSetting jsonSetting = new JsonSetting(true);
                 await Post.DownloadAsync(CommonDI.CommonSP, url, SerializerHelper.GetJsonString(data, jsonSetting), stream).ConfigureAwait(false);
 
-                return new WxJsonResult()
-                {
-                    errcode = ReturnCode.请求成功
-                };
+                return stream.Length < 1024 ?
+               await ToWxJsonResultAsync(stream) : new WxJsonResult()
+               {
+                   errcode = ReturnCode.请求成功
+               };
             }, accessTokenOrAppId).ConfigureAwait(false);
         }
 
@@ -1073,10 +1109,11 @@ namespace Senparc.Weixin.WxOpen.AdvancedAPIs.WxApp
                 JsonSetting jsonSetting = new JsonSetting(true);
                 await CO2NET.HttpUtility.Post.DownloadAsync(CommonDI.CommonSP, url, SerializerHelper.GetJsonString(data, jsonSetting), stream).ConfigureAwait(false);
 
-                return new WxJsonResult()
-                {
-                    errcode = ReturnCode.请求成功
-                };
+                return stream.Length < 1024 ?
+              await ToWxJsonResultAsync(stream) : new WxJsonResult()
+              {
+                  errcode = ReturnCode.请求成功
+              };
             }, accessTokenOrAppId).ConfigureAwait(false);
         }
 
@@ -1100,7 +1137,8 @@ namespace Senparc.Weixin.WxOpen.AdvancedAPIs.WxApp
                 var data = new { path = path, width = width };
                 await Post.DownloadAsync(CommonDI.CommonSP, url, SerializerHelper.GetJsonString(data), stream).ConfigureAwait(false);
 
-                return new WxJsonResult()
+                return stream.Length < 1024 ?
+                await ToWxJsonResultAsync(stream) : new WxJsonResult()
                 {
                     errcode = ReturnCode.请求成功
                 };

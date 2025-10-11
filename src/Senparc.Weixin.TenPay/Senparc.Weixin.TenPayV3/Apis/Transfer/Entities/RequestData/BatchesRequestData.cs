@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2023 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2025 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,13 +19,16 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
   
     文件名：BatchesRequestData.cs
     文件功能描述：发起商家转账API 请求数据
     
     
     创建标识：Senparc - 20220629
+
+    修改标识：Guili95 - 20240623
+    修改描述：v1.4.0 添加：微信支付-发起商家转账入参添加转账场景ID、通知地址；返回结果添加批次状态
 
 ----------------------------------------------------------------*/
 
@@ -75,6 +78,16 @@ namespace Senparc.Weixin.TenPayV3.Apis.Transfer
         /// <para>发起批量转账的明细列表，最多三千笔</para>
         /// </summary>
         public Transfer_Detail_List[] transfer_detail_list { get; set; }
+        /// <summary>
+        /// 转账场景ID
+        /// <para>该批次转账使用的转账场景，如不填写则使用商家的默认场景，如无默认场景可为空，可前往“商家转账到零钱-前往功能”中申请。示例值：1001-现金营销</para>
+        /// </summary>
+        public string transfer_scene_id { get; set; }
+        /// <summary>
+        /// 通知地址
+        /// <para>异步接收微信支付结果通知的回调地址，通知url必须为公网可访问的url，必须为https，不能携带参数</para>
+        /// </summary>
+        public string notify_url { get; set; }
     }
 
     public class Transfer_Detail_List

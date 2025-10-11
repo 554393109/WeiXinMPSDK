@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
 
     文件名：WeixinController.cs
     文件功能描述：用于处理微信回调的信息
@@ -23,7 +23,6 @@
   3. 更多使用演示请参考 Senparc.Weixin.Sample.All 同名文件。
  */
 
-//DPBMARK_FILE MP
 using Microsoft.AspNetCore.Mvc;
 
 namespace Senparc.Weixin.Sample.MP.Controllers
@@ -35,7 +34,10 @@ namespace Senparc.Weixin.Sample.MP.Controllers
     using Senparc.Weixin.MP;
     using Senparc.Weixin.MP.Entities.Request;
     using Senparc.Weixin.MP.MvcExtension;
-
+    using System;
+    using System.IO;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     public partial class WeixinController : BaseController
     {
@@ -51,7 +53,7 @@ namespace Senparc.Weixin.Sample.MP.Controllers
         }
 
         /// <summary>
-        /// 微信后台验证地址（使用Get），微信后台的“接口配置信息”的Url填写如：http://sdk.weixin.senparc.com/weixin
+        /// 微信后台验证地址（使用Get），微信后台的“接口配置信息”的Url填写如：https://sdk.weixin.senparc.com/weixin
         /// </summary>
         [HttpGet]
         [ActionName("Index")]

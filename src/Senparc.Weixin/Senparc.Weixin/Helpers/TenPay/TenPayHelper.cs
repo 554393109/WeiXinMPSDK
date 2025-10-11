@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2023 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2025 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：TenPayHelper.cs
     文件功能描述：微信支付帮助类
@@ -83,6 +83,30 @@ namespace Senparc.Weixin.Helpers
                 tenPayV3_PrivateKey = privateKey;
             }
             return tenPayV3_PrivateKey;
+        }
+
+        /// <summary>
+        /// 尝试从文件获取正确格式的私钥
+        /// </summary>
+        /// <returns></returns>
+        public static string TryGetPublicKeyFromFile(ref string tenPayV3_PubKey)
+        {
+            if (tenPayV3_PubKey != null && tenPayV3_PubKey.Length < 100 && tenPayV3_PubKey.StartsWith("~/"))
+            {
+                //虚拟路径
+                //尝试读取文件
+                var filePath = CO2NET.Utilities.ServerUtility.ContentRootMapPath(tenPayV3_PubKey);
+                if (!File.Exists(filePath))
+                {
+                    Senparc.Weixin.WeixinTrace.BaseExceptionLog(new WeixinException("TenPayV3_PubKey 证书文件不存在！" + filePath));
+                }
+
+                var fileContent = File.ReadAllText(filePath);
+                Regex regex = new Regex(@"(--([^\r\n])+--[\r\n]{0,1})|[\r\n]");
+                var publicKey = regex.Replace(fileContent, "");
+                tenPayV3_PubKey = publicKey;
+            }
+            return tenPayV3_PubKey;
         }
     }
 }

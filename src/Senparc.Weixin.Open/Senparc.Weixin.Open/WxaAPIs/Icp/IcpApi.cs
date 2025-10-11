@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：IcpApi.cs
     文件功能描述：第三方服务商小程序备案 接口
@@ -64,7 +64,8 @@ namespace Senparc.Weixin.Open.WxaAPIs
         public static CreateIcpVerifyTaskResultJson CreateIcpVerifyTask(string accessToken, int timeOut = Config.TIME_OUT)
         {
             var url = string.Format(Config.ApiMpHost + "/wxa/icp/create_icp_verifytask?access_token={0}", accessToken.AsUrlData());
-            return CommonJsonSend.Send<CreateIcpVerifyTaskResultJson>(null, url, null, CommonJsonSendType.POST, timeOut);
+            var postData = new { };
+            return CommonJsonSend.Send<CreateIcpVerifyTaskResultJson>(null, url, postData, CommonJsonSendType.POST, timeOut);
         }
 
         /// <summary>
@@ -248,7 +249,8 @@ namespace Senparc.Weixin.Open.WxaAPIs
         public static async Task<CreateIcpVerifyTaskResultJson> CreateIcpVerifyTaskAsync(string accessToken, int timeOut = Config.TIME_OUT)
         {
             var url = string.Format(Config.ApiMpHost + "/wxa/icp/create_icp_verifytask?access_token={0}", accessToken.AsUrlData());
-            return await CommonJsonSend.SendAsync<CreateIcpVerifyTaskResultJson>(null, url, null, CommonJsonSendType.POST, timeOut);
+            var postData = new { };
+            return await CommonJsonSend.SendAsync<CreateIcpVerifyTaskResultJson>(null, url, postData, CommonJsonSendType.POST, timeOut);
         }
 
         /// <summary>

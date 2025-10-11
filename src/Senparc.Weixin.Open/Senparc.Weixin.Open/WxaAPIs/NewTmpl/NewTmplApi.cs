@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2023 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2025 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：TemplateApi.cs
     文件功能描述：小程序模板消息
@@ -28,6 +28,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     修改标识：Senparc - 20200731
     修改描述：v3.8.502.1 小程序订阅消息模板的管理
+
+    修改标识：LEIRONGHUA - 20250523
+    修改描述：v4.22.1 修复开放平台删除模板时提示的“missing parameter priTmplId”错误 (PR #3134)
 
 ----------------------------------------------------------------*/
 
@@ -178,7 +181,7 @@ namespace Senparc.Weixin.Open.WxaAPIs.NewTmpl
             {
                 {"priTmplId", priTmplId}
             };
-            return CommonJsonSend.Send<WxJsonResult>(accessToken, urlFormat, data, timeOut: timeOut);
+            return CommonJsonSend.Send<WxJsonResult>(accessToken, urlFormat, data, timeOut: timeOut, contentType:"application/json");
         }
         #endregion
         #endregion
@@ -300,7 +303,7 @@ namespace Senparc.Weixin.Open.WxaAPIs.NewTmpl
             {
                 {"priTmplId", priTmplId}
             };
-            return await CommonJsonSend.SendAsync<WxJsonResult>(accessToken, urlFormat, data, timeOut: timeOut);
+            return await CommonJsonSend.SendAsync<WxJsonResult>(accessToken, urlFormat, data, timeOut: timeOut, contentType:"application/json");
         }
         #endregion
         

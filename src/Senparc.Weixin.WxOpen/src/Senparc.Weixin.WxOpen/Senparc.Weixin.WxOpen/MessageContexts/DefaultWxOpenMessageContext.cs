@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：DefaultWxOpenMessageContext.cs
     文件功能描述：小程序上下文消息的默认实现
@@ -81,6 +81,12 @@ namespace Senparc.Weixin.WxOpen.MessageContexts
                         case "WXA_MEDIA_CHECK"://内容安全回调：wxa_media_check 推送结果
                             requestMessage = new RequestMessageEvent_MediaCheck();
                             break;
+                        case "WXA_CATEGORY_AUDIT": //小程序类目审核事件
+                            requestMessage = new RequestMessageEvent_WxaCategoryAudit();
+                            break;
+                        case "ADD_EXPRESS_PATH": //运单轨迹推送事件
+                            requestMessage = new RequestMessageEvent_AddExpressPath();
+                            break;
                         case "TRADE_MANAGE_ORDER_SETTLEMENT"://订单将要结算或已经结算
                             requestMessage = new RequestMessageEvent_TradeManageOrderSettlement();
                             break;
@@ -89,6 +95,24 @@ namespace Senparc.Weixin.WxOpen.MessageContexts
                             break;
                         case "TRADE_MANAGE_REMIND_SHIPPING"://提醒需要上传发货信息
                             requestMessage = new RequestMessageEvent_TradeManageRemindShipping();
+                            break;
+                        case "WX_VERIFY_PAY_SUCC": //微信认证支付成功通知
+                            requestMessage = new RequestMessageEvent_WxVerifyPaySucc();
+                            break;
+                        case "WX_VERIFY_DISPATCH": //微信认证派单事件
+                            requestMessage = new RequestMessageEvent_WxVerifyDispatch();
+                            break;
+                        case "USER_INFO_MODIFIED": //用户资料变更
+                            requestMessage = new RequestMessageEvent_UserInfoModified();
+                            break;
+                        case "USER_AUTHORIZATION_REVOKE": //用户撤回
+                            requestMessage = new RequestMessageEvent_UserAuthorizationRevoke();
+                            break;
+                        case "USER_AUTHORIZATION_CANCELLATION": //用户完成注销
+                            requestMessage = new RequestMessageEvent_UserAuthorizationCancellation();
+                            break;
+                        case "CHARGE_SERVICE_QUOTA_NOTIFY": //付费管理订单用量告警事件
+                            requestMessage = new RequestMessageEvent_ChargeServiceQuotaNotify();
                             break;
                         default://其他意外类型（也可以选择抛出异常）
                             requestMessage = new RequestMessageEventBase();

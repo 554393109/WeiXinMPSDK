@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net462;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>3.17.4</Version>
+    <Version>3.23.9</Version>
     <LangVersion>9.0</LangVersion>
     <AssemblyName>Senparc.Weixin.WxOpen</AssemblyName>
     <RootNamespace>Senparc.Weixin.WxOpen</RootNamespace>
@@ -12,14 +12,14 @@
 			Senparc.Weixin SDK 开源项目：
 			https://github.com/JeffreySu/WeiXinMPSDK
 		</Description>
-    <Copyright>Senparc Copyright © 2004~2023</Copyright>
+    <Copyright>Senparc Copyright © 2004~2025</Copyright>
     <PackageTags>微信,weixin,小程序,wxopen,MiniProgram,公众号,WeChat,Senparc,盛派,SDK,C#,JSSDK,微信支付,分布式</PackageTags>
     <Authors>Jeffrey Su</Authors>
     <Owners>Senparc</Owners>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <ProjectUrl>https://github.com/JeffreySu/WeiXinMPSDK</ProjectUrl>
     <Title>Senparc.Weixin.WxOpen.dll</Title>
-    <Summary>微信公众号SDK for C#</Summary>
+    <Summary>微信 SDK for .NET / C#</Summary>
     <PackageProjectUrl>https://github.com/JeffreySu/WeiXinMPSDK</PackageProjectUrl>
     <PackageIcon>icon.jpg</PackageIcon>
     <PackageReleaseNotes>
@@ -178,6 +178,17 @@
 		v3.17.1 添加 CodeApi.RevertCodeRelease() 方法的 appVersion 参数
 		v3.17.2 添加“小程序虚拟支付”功能 PR #2961 / Issue #2951
 		v3.17.3 添加小程序分类审核异步通知事件 / PR #2969
+		v3.17.5 新增小程序认证年审事件接口 / PR #2979
+		v3.17.6 虚拟支付增加了接口从1.0.7~1.0.10，同步完善 / PR #2987
+		v3.19.0 添加小程序发货信息管理服务-查询小程序是否已完成交易结算管理确认接口 / PR #3030
+		[2024-08-06] v3.19.2 更新基础库，包括 Senparc.CO2NET 相关库、Senparc.AI
+		[2024-09-02] v3.20.2 WxOpen 支持小程序付费能力的用量告警事件
+		[2024-10-08] v3.21.0 WxOpen 添加“查询购买资源包的用量情况”接口 #3078
+		[2024-10-20] v3.21.2 修正 first_save_flag 类型错误，应为 int; 同时增加 FirstSaveFlag 属性, 用于 bool 类型判断是否首次充值 #2986 感谢 @WanderingGrass
+		[2024-11-14] v3.22.0 添加 NCF UrlScheme 接口 #3093 感谢 @mojinxun
+		[2025-05-23] v3.23.5 Feature/wxacode unlimit参数修改（PR #3133） 感谢 @mojinxun
+		[2025-06-08] v3.23.6 完善小程序二维码的获取结果处理（PR #3141） 感谢 @blackWins
+		[2025-08-16] v3.23.8 fix: 修复 GetWxaCodeUnlimit() 方法 Page 参数问题
 </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
   </PropertyGroup>
@@ -216,12 +227,8 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' != 'net462' ">
-    <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
-    <PackageReference Include="System.Xml.XPath.XmlDocument" Version="4.3.0" />
-  </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Senparc.NeuChar" Version="2.4.0" />
+    <PackageReference Include="Senparc.NeuChar" Version="2.6.1-beta.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Senparc.Weixin.MP\Senparc.Weixin.MP\Senparc.Weixin.MP.net8.csproj" />

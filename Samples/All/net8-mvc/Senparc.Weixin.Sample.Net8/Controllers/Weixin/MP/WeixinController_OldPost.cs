@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：WeixinController_OldPost.cs
     文件功能描述：用户发送消息后，微信平台自动Post一个请求到这里，并等待响应XML
@@ -8,7 +8,6 @@
     创建标识：Senparc - 20150312
 ----------------------------------------------------------------*/
 
-//DPBMARK_FILE MP
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,7 +19,7 @@ using System.Xml.Linq;
 using Senparc.Weixin.MP.MessageHandlers;
 using Senparc.Weixin.Sample.CommonService;
 
-namespace Senparc.Weixin.Sample.Net6.Controllers
+namespace Senparc.Weixin.Sample.Net8.Controllers
 {
     using Senparc.CO2NET.Utilities;
     using Senparc.NeuChar;
@@ -72,7 +71,7 @@ namespace Senparc.Weixin.Sample.Net6.Controllers
                                 ResponseMessageBase.CreateFromRequestMessage<ResponseMessageText>(requestMessage);
                             strongresponseMessage.Content =
                                 string.Format(
-                                    "您刚才发送了文字信息：{0}\r\n您还可以发送【位置】【图片】【语音】等类型的信息，查看不同格式的回复。\r\nSDK官方地址：http://sdk.weixin.senparc.com",
+                                    "您刚才发送了文字信息：{0}\r\n您还可以发送【位置】【图片】【语音】等类型的信息，查看不同格式的回复。\r\nSDK官方地址：https://sdk.weixin.senparc.com",
                                     strongRequestMessage.Content);
                             responseMessage = strongresponseMessage;
                             break;
@@ -93,14 +92,14 @@ namespace Senparc.Weixin.Sample.Net6.Controllers
                                 Title = "您刚才发送了图片信息",
                                 Description = "您发送的图片将会显示在边上",
                                 PicUrl = strongRequestMessage.PicUrl,
-                                Url = "http://sdk.weixin.senparc.com"
+                                Url = "https://sdk.weixin.senparc.com"
                             });
                             strongresponseMessage.Articles.Add(new Article()
                             {
                                 Title = "第二条",
                                 Description = "第二条带连接的内容",
                                 PicUrl = strongRequestMessage.PicUrl,
-                                Url = "http://sdk.weixin.senparc.com"
+                                Url = "https://sdk.weixin.senparc.com"
                             });
                             responseMessage = strongresponseMessage;
                             break;
@@ -111,7 +110,7 @@ namespace Senparc.Weixin.Sample.Net6.Controllers
                             var strongRequestMessage = requestMessage as RequestMessageVoice;
                             var strongresponseMessage =
                                ResponseMessageBase.CreateFromRequestMessage<ResponseMessageMusic>(requestMessage);
-                            strongresponseMessage.Music.MusicUrl = "http://sdk.weixin.senparc.com/Content/music1.mp3";
+                            strongresponseMessage.Music.MusicUrl = "https://sdk.weixin.senparc.com/Content/music1.mp3";
                             responseMessage = strongresponseMessage;
                             break;
                         }

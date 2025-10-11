@@ -12,7 +12,6 @@
 
  */
 
-//DPBMARK_FILE MiniProgram
 using Microsoft.AspNetCore.Mvc;
 using Senparc.CO2NET.AspNet.HttpUtility;
 using Senparc.CO2NET.Cache;
@@ -424,7 +423,7 @@ sessionKey: {(await SessionContainer.CheckRegisteredAsync(sessionId)
                 //{"touser":"oeaTy0DgoGq-lyqvTauWVjbIVuP0","weapp_template_msg":null,"mp_template_msg":{"appid":"wx669ef95216eef885","template_id":null,"url":"https://dev.senparc.com","miniprogram":{"appid":"wx12b4f63276b14d4c","pagepath":"websocket/websocket"},"data":{"first":{"value":"小程序和公众号统一的服务消息","color":"#173177"},"keyword1":{"value":"2022/1/20 23:22:12","color":"#173177"},"keyword2":{"value":"dev.senparc.com","color":"#173177"},"keyword3":{"value":"小程序接口测试","color":"#173177"},"keyword4":{"value":"正常","color":"#173177"},"keyword5":{"value":"测试“小程序和公众号统一的服务消息”接口，服务正常","color":"#173177"},"remark":{"value":"您的 OpenId：oeaTy0DgoGq-lyqvTauWVjbIVuP0","color":"#173177"},"TemplateId":"ur6TqESOo-32FEUk4qJxeWZZVt4KEOPjqbAFDGWw6gg","Url":"https://dev.senparc.com","TemplateName":"系统异常告警通知"}}}
 
 
-                #region 公众号模板消息信息       -- DPBMARK MP
+                #region 公众号模板消息信息
 
                 //可选参数（需要和公众号模板消息匹配）：
                 templateData = templateData = new
@@ -542,30 +541,32 @@ sessionKey: {(await SessionContainer.CheckRegisteredAsync(sessionId)
         {
             try
             {
+                var weixinSetting = Config.SenparcWeixinSetting;
+
                 var sessionBag = SessionContainer.GetSession(sessionId);
                 var openId = sessionBag.OpenId;
 
                 //生成订单10位序列号，此处用时间和随机数生成，商户根据自己调整，保证唯一
-                var sp_billno = string.Format("{0}{1}{2}", Config.SenparcWeixinSetting.TenPayV3_MchId /*10位*/, SystemTime.Now.ToString("yyyyMMddHHmmss"),
+                var sp_billno = string.Format("{0}{1}{2}", weixinSetting.TenPayV3_MchId /*10位*/, SystemTime.Now.ToString("yyyyMMddHHmmss"),
                         TenPayV3Util.BuildRandomStr(6));
 
                 var body = "小程序微信支付Demo";
                 var price = 1;//单位：分
-                var notifyUrl = Config.SenparcWeixinSetting.TenPayV3_WxOpenTenpayNotify;
-                var basePayApis = new Senparc.Weixin.TenPayV3.Apis.BasePayApis(Config.SenparcWeixinSetting);
+                var notifyUrl = weixinSetting.TenPayV3_WxOpenTenpayNotify;
+                var basePayApis = new Senparc.Weixin.TenPayV3.Apis.BasePayApis(weixinSetting);
 
-                var requestData = new TenPayV3.Apis.BasePay.TransactionsRequestData(WxOpenAppId, Config.SenparcWeixinSetting.TenPayV3_MchId, body, sp_billno, new TenPayV3.Entities.TenpayDateTime(SystemTime.Now.AddMinutes(120).DateTime, false), HttpContext.UserHostAddress().ToString(), notifyUrl, null, new() { currency = "CNY", total = price }, new(openId), null, null, null);
+                var requestData = new TenPayV3.Apis.BasePay.TransactionsRequestData(WxOpenAppId, weixinSetting.TenPayV3_MchId, body, sp_billno, new TenPayV3.Entities.TenpayDateTime(SystemTime.Now.AddMinutes(120).DateTime, false), HttpContext.UserHostAddress().ToString(), notifyUrl, null, new() { currency = "CNY", total = price }, new(openId), null, null, null);
                 var result = await basePayApis.JsApiAsync(requestData);
 
                 var packageStr = "prepay_id=" + result.prepay_id;
 
-                var jsApiUiPackage = TenPaySignHelper.GetJsApiUiPackage(WxOpenAppId, result.prepay_id);
+                var jsApiUiPackage = TenPaySignHelper.GetJsApiUiPackage(WxOpenAppId, result.prepay_id, weixinSetting);
 
                 return Json(new
                 {
                     success = true,
                     prepay_id = result.prepay_id,
-                    appId = Config.SenparcWeixinSetting.WxOpenAppId,
+                    appId = weixinSetting.WxOpenAppId,
                     timeStamp = jsApiUiPackage.Timestamp,
                     nonceStr = jsApiUiPackage.NonceStr,
                     package = packageStr,

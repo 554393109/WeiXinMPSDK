@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：DefaultWorkMessageContext.cs
     文件功能描述：企业微信上下文的默认实现
@@ -24,6 +24,16 @@
 
     修改标识：XiaoPoTian - 20231119
     修改描述：v3.18.1 添加“企业客户标签变更事件回调通知”（CHANGE_EXTERNAL_Tag）
+    
+    修改标识：IcedMango - 20240229
+    修改描述：添加: 企业微信会话存档-产生会话回调事件（MSGAUDIT_NOTIFY）
+
+    修改标识：LofyLiu - 20240315
+    修改描述：添加: 模板卡片回调事件
+
+    修改标识：Senparc - 20250218
+    修改描述：[2025-02-18] v3.25.5 修复“客户标签回调函数-重排事件报错”(Issue #3116）
+
 ----------------------------------------------------------------*/
 
 using Senparc.NeuChar;
@@ -198,7 +208,7 @@ namespace Senparc.Weixin.Work.MessageContexts
                         case "CHANGE_EXTERNAL_TAG"://企业客户标签变更事件推送
                             //创建标签时，此项为tag，创建标签组时，此项为tag_group
                             //文档：https://developer.work.weixin.qq.com/document/path/92130#%E4%BC%81%E4%B8%9A%E5%AE%A2%E6%88%B7%E6%A0%87%E7%AD%BE%E5%88%9B%E5%BB%BA%E4%BA%8B%E4%BB%B6
-                            var tagType = doc.Root.Element("TagType").Value;
+                            var tagType = doc.Root.Element("TagType")?.Value;
                             switch (doc.Root.Element("ChangeType").Value.ToUpper())
                             {
                                 case "CREATE":
@@ -226,6 +236,17 @@ namespace Senparc.Weixin.Work.MessageContexts
                             break;
                         case "OPEN_APPROVAL_CHANGE":
                             requestMessage = new RequestMessageEvent_OpenApprovalChange();
+                            break;
+                        // 企业微信会话存档-产生会话回调事件(msgaudit_notify)
+                        // 文档: https://developer.work.weixin.qq.com/document/path/95039
+                        case "MSGAUDIT_NOTIFY":
+                            requestMessage = new RequestMessageEvent_MsgAuditNotify();
+                            break;
+                        case "TEMPLATE_CARD_EVENT": // 模板卡片事件推送
+                            requestMessage = new RequestMessageEvent_TemplateCardEvent();
+                            break;  
+                        case "TEMPLATE_CARD_MENU_EVENT": // 通用模板卡片右上角菜单事件
+                            requestMessage = new RequestMessageEvent_TemplateCardMenuEvent();
                             break;
                         default://其他意外类型（也可以选择抛出异常）
                             requestMessage = new RequestMessageEventBase();

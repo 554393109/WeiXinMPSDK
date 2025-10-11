@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：MenuController.cs
     文件功能描述：自定义菜单设置工具Controller
@@ -7,7 +7,6 @@
     
     创建标识：Senparc - 20150312
 ----------------------------------------------------------------*/
-//DPBMARK_FILE MP
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,7 +26,7 @@ using Senparc.Weixin.MP.Entities.Menu;
 using Senparc.CO2NET.HttpUtility;
 using Senparc.Weixin.MP;
 
-namespace Senparc.Weixin.Sample.Net6.Controllers
+namespace Senparc.Weixin.Sample.Net8.Controllers
 {
     public class MenuController : BaseController
     {

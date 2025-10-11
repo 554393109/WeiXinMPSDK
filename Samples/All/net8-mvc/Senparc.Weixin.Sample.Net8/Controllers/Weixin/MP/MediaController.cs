@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：MediaController.cs
     文件功能描述：根据mediaId获取语音
@@ -10,7 +10,6 @@
     修改标识：Senparc - 20150312
     修改描述：TestUploadMediaFile() 方法专为Senparc.Weixin.MP.Test/HttpUtility/RequestUtilityTest.cs/HttpPostTest 提供上传测试目标
 ----------------------------------------------------------------*/
-//DPBMARK_FILE MP
 
 using System;
 using System.Collections.Generic;
@@ -23,7 +22,7 @@ using Senparc.CO2NET.Utilities;
 using Senparc.Weixin.MP;
 using Senparc.Weixin.Sample.CommonService.Utilities;
 
-namespace Senparc.Weixin.Sample.Net6.Controllers
+namespace Senparc.Weixin.Sample.Net8.Controllers
 {
     public class MediaController : BaseController
     {

@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：CustomMessageHandler_Events.cs
     文件功能描述：自定义MessageHandler
@@ -8,7 +8,6 @@
     创建标识：Senparc - 20150312
 ----------------------------------------------------------------*/
 
-//DPBMARK_FILE MP
 using Senparc.CO2NET;
 using Senparc.CO2NET.Extensions;
 using Senparc.CO2NET.Utilities;
@@ -105,6 +104,14 @@ QQ群：377815480
                 version);
         }
 
+        string _sdkIntroduction = @"Senparc.Weixin SDK 是目前使用率*高的 .NET 微信 SDK，自 2012 年开源、2013 年登录 GitHub，目前也是中国在 GitHub 上 Star、Fork 数*高的开源项目之一，广受开发者欢迎。
+
+当前示例及源码可从开源项目获得完整源码：https://github.com/JeffreySu/WeiXinMPSDK。
+
+在线示例（使用 PC 打开）：https://sdk.weixin.senparc.com。
+
+Senparc.Weixin SDK 使用 Apache License 2.0 开源协议，支持商用，完全免费！ ";
+
         public string GetDownloadInfo(CodeRecord codeRecord)
         {
             return string.Format(@"您已通过二维码验证，浏览器即将开始下载 Senparc.Weixin SDK 帮助文档。
@@ -147,6 +154,11 @@ QQ群：377815480
 
             switch (requestMessage.EventKey)
             {
+                case "AI":
+                    {
+                        reponseMessage =  this.StartAIChatAsync().Result;
+                    }
+                    break;
                 case "OneClick":
                     {
                         //这个过程实际已经在OnTextOrEventRequest中命中“OneClick”关键字，并完成回复，这里不会执行到。
@@ -317,6 +329,13 @@ QQ群：377815480
                     {
                         var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
                         strongResponseMessage.Content = GetWelcomeInfo();
+                        reponseMessage = strongResponseMessage;
+                    }
+                    break;
+                case "SdkIntroduction":
+                    {
+                        var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
+                        strongResponseMessage.Content = _sdkIntroduction;
                         reponseMessage = strongResponseMessage;
                     }
                     break;

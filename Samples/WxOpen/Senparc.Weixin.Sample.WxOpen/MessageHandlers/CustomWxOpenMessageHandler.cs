@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
 
     文件名：CustomWxOpenMessageHandler.cs
     文件功能描述：微信小程序自定义MessageHandler
@@ -12,7 +12,6 @@
 
 ----------------------------------------------------------------*/
 
-//DPBMARK_FILE MiniProgram
 using Senparc.CO2NET.Utilities;
 using Senparc.NeuChar.Entities;
 using Senparc.Weixin.WxOpen.Entities;

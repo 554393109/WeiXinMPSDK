@@ -1,5 +1,4 @@
-﻿//DPBMARK_FILE Open
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,7 +28,7 @@ using Senparc.Weixin.MP.MessageContexts;
 using Senparc.CO2NET.AspNet.HttpUtility;
 using Senparc.Weixin.AspNet.MvcExtension;
 
-namespace Senparc.Weixin.Sample.Net6.Controllers
+namespace Senparc.Weixin.Sample.Net8.Controllers
 {
     /// <summary>
     /// 第三方开放平台演示
@@ -50,7 +49,7 @@ namespace Senparc.Weixin.Sample.Net6.Controllers
             //获取预授权码
             var preAuthCode = await ComponentContainer.TryGetPreAuthCodeAsync(component_AppId, component_Secret, true);
 
-            var callbackUrl = "http://sdk.weixin.senparc.com/OpenOAuth/OpenOAuthCallback";//成功回调地址
+            var callbackUrl = "https://sdk.weixin.senparc.com/OpenOAuth/OpenOAuthCallback";//成功回调地址
             var url = ComponentApi.GetComponentLoginPageUrl(component_AppId, preAuthCode, callbackUrl);
             return Redirect(url);
         }
@@ -134,7 +133,7 @@ namespace Senparc.Weixin.Sample.Net6.Controllers
         [HttpPost]
         public async Task<ActionResult> Callback(Senparc.Weixin.MP.Entities.Request.PostModel postModel)
         {
-            //此处的URL格式类型为：http://sdk.weixin.senparc.com/Open/Callback/$APPID$， 在RouteConfig中进行了配置，你也可以用自己的格式，只要和开放平台设置的一致。
+            //此处的URL格式类型为：https://sdk.weixin.senparc.com/Open/Callback/$APPID$， 在RouteConfig中进行了配置，你也可以用自己的格式，只要和开放平台设置的一致。
 
             //处理微信普通消息，可以直接使用公众号的MessageHandler。此处的URL也可以直接填写公众号普通的URL，如本Demo中的/Weixin访问地址。
 

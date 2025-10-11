@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
   
     文件名：ThirdPartyMessageHandler.cs
     文件功能描述：开放平台消息处理器
@@ -24,6 +24,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using System.Xml.Linq;
 using Senparc.CO2NET.Utilities;
 using Senparc.NeuChar;
@@ -33,7 +34,7 @@ using Senparc.Weixin.Tencent;
 
 namespace Senparc.Weixin.Open.MessageHandlers
 {
-    public abstract class ThirdPartyMessageHandler
+    public abstract partial class ThirdPartyMessageHandler
     {
         private PostModel _postModel;
         /// <summary>
@@ -93,117 +94,47 @@ namespace Senparc.Weixin.Open.MessageHandlers
 
             return RequestDocument;
         }
+#region Sync Version
 
+        [Obsolete("请使用异步方法 ExecutingAsync()")]
         public void Execute()
         {
-            if (CancelExecute)
-            {
-                return;
-            }
-
-            OnExecuting();
-
-            if (CancelExecute)
-            {
-                return;
-            }
-
-            try
-            {
-                if (RequestMessage == null)
-                {
-                    return;
-                }
-
-                switch (RequestMessage.InfoType)
-                {
-                    case RequestInfoType.component_verify_ticket:
-                        {
-                            var requestMessage = RequestMessage as RequestMessageComponentVerifyTicket;
-                            ResponseMessageText = OnComponentVerifyTicketRequest(requestMessage);
-                        }
-                        break;
-                    case RequestInfoType.unauthorized:
-                        {
-                            var requestMessage = RequestMessage as RequestMessageUnauthorized;
-                            ResponseMessageText = OnUnauthorizedRequest(requestMessage);
-                        }
-                        break;
-                    case RequestInfoType.authorized:
-                        {
-                            var requestMessage = RequestMessage as RequestMessageAuthorized;
-                            ResponseMessageText = OnAuthorizedRequest(requestMessage);
-                        }
-                        break;
-                    case RequestInfoType.updateauthorized:
-                        {
-                            var requestMessage = RequestMessage as RequestMessageUpdateAuthorized;
-                            ResponseMessageText = OnUpdateAuthorizedRequest(requestMessage);
-                        }
-                        break;
-                    case RequestInfoType.notify_third_fasteregister:
-                        {
-                            var requestMessage = RequestMessage as RequestMessageThirdFasteRegister;
-                            ResponseMessageText = OnThirdFasteRegisterRequest(requestMessage);
-                        }
-                        break;
-                    case RequestInfoType.wxa_nickname_audit:
-                        {
-                            var requestMessage = RequestMessage as RequestMessageNicknameAudit;
-                            ResponseMessageText = OnNicknameAuditRequest(requestMessage);
-                        }
-                        break;
-                    case RequestInfoType.notify_third_fastverifybetaapp:
-                        {
-                            var requestMessage = RequestMessage as RequestMessageFastVerifyBetaApp;
-                            ResponseMessageText = OnFastVerifyBetaAppRequest(requestMessage);
-                        }
-                        break;
-                    case RequestInfoType.notify_third_fastregisterbetaapp:
-                        {
-                            var requestMessage = RequestMessage as RequestMessageFastRegisterBetaAppApp;
-                            ResponseMessageText = OnFastRegisterBetaAppRequest(requestMessage);
-                        }
-                        break;
-                    case RequestInfoType.notify_icpfiling_verify_result:
-                        {
-                            var requestMessage = RequestMessage as RequestMessageIcpFilingVerify;
-                            ResponseMessageText = OnIcpFilingVerifyRequest(requestMessage);
-                        }
-                        break;
-                    case RequestInfoType.notify_apply_icpfiling_result:
-                        {
-                            var requestMessage = RequestMessage as RequestMessageIcpFilingApply;
-                            ResponseMessageText = OnIcpFilingApplyRequest(requestMessage);
-                        }
-                        break;
-                    case RequestInfoType.notify_3rd_wxa_auth:
-                        {
-                            var requestMessage = RequestMessage as RequestMessage3rdWxaAuth;
-                            ResponseMessageText = On3rdWxaAuthRequest(requestMessage);
-                        }
-                        break;
-                    default:
-                        throw new UnknownRequestMsgTypeException("未知的InfoType请求类型", null);
-                }
-
-            }
-            catch (Exception ex)
-            {
-                throw new MessageHandlerException("ThirdPartyMessageHandler中Execute()过程发生错误：" + ex.Message, ex);
-            }
-            finally
-            {
-                OnExecuted();
-            }
+            ExecuteAsync(CancellationToken.None).GetAwaiter().GetResult();
         }
 
+        [Obsolete("请使用异步方法 OnExecutingAsync()")]
         public virtual void OnExecuting()
         {
         }
 
+        [Obsolete("请使用异步方法 OnExecutedAsync()")]
         public virtual void OnExecuted()
         {
+        }
+
+        /// <summary>
+        /// 小程序订单页设置申请结果通知
+        /// </summary>
+        /// <param name="requestMessage"></param>
+        /// <returns></returns>
+        public virtual string OnOrderPathApplyResultNorifyRequest(RequestMessageOrderPathApplyResultNotify requestMessage)
+        {
+            return "success";
+        }
+
+        /// <summary>
+        /// 小程序订单页设置申请审核结果通知
+        /// </summary>
+        /// <param name="requestMessage"></param>
+        /// <returns></returns>
+        public virtual string OnOrderPathAuditResultNotifyRequest(RequestMessageOrderPathAuditResultNotify requestMessage)
+        {
+            return "success";
+        }
+
+        public virtual string On3rdWxaWxVerifyRequest(RequestMessage3rdWxaWxVerify requestMessage)
+        {
+            return "success";
         }
 
 
@@ -270,6 +201,8 @@ namespace Senparc.Weixin.Open.MessageHandlers
             return "success";
         }
 
+
+        [Obsolete("此事件请在小程序SDK处理")]
         public virtual string OnNicknameAuditRequest(RequestMessageNicknameAudit requestMessage)
         {
             return "success";
@@ -285,6 +218,6 @@ namespace Senparc.Weixin.Open.MessageHandlers
             return "success";
         }
 
-
+#endregion
     }
 }

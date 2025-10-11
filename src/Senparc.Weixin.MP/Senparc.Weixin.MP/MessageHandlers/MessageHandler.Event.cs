@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2023 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2025 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：MessageHandler.Event.cs
     文件功能描述：微信请求的集中处理方法：Event相关
@@ -81,6 +81,9 @@ namespace Senparc.Weixin.MP.MessageHandlers
                     break;
                 case Event.MASSSENDJOBFINISH://群发消息成功
                     responseMessage = OnEvent_MassSendJobFinishRequest(RequestMessage as RequestMessageEvent_MassSendJobFinish);
+                    break;
+                case Event.PUBLISHJOBFINISH://事件推送发布结果
+                    responseMessage = OnEvent_PublishJobFinishRequest(RequestMessage as RequestMessageEvent_PublishJobFinish);
                     break;
                 case Event.TEMPLATESENDJOBFINISH://推送模板消息成功
                     responseMessage = OnEvent_TemplateSendJobFinishRequest(RequestMessage as RequestMessageEvent_TemplateSendJobFinish);
@@ -189,6 +192,16 @@ namespace Senparc.Weixin.MP.MessageHandlers
                     responseMessage = OnEvent_Subscribe_Msg_SentRequest(RequestMessage as RequestMessageEvent_Subscribe_Msg_Sent);
                     break;
 
+                case Event.user_info_modified:
+                    responseMessage = OnEvent_UserInfoModifiedRequest(RequestMessage as RequestMessageEvent_UserInfoModified);
+                    break;
+                case Event.user_authorization_revoke:
+                    responseMessage = OnEvent_UserAuthorizationRevokeRequest(RequestMessage as RequestMessageEvent_UserAuthorizationRevoke);
+                    break;
+                case Event.user_authorization_cancellation:
+                    responseMessage = OnEvent_UserAuthorizationCancellationRequest(RequestMessage as RequestMessageEvent_UserAuthorizationCancellation);
+                    break;
+
                 #region 卡券回调
 
                 case Event.giftcard_pay_done:
@@ -255,6 +268,34 @@ namespace Senparc.Weixin.MP.MessageHandlers
         #region Event下属分类，接收事件方法
 
         /// <summary>
+        /// Event事件类型请求之用户资料变更
+        /// </summary>
+        /// <param name="requestMessage"></param>
+        /// <returns></returns>
+        public virtual IResponseMessageBase OnEvent_UserInfoModifiedRequest(RequestMessageEvent_UserInfoModified requestMessage)
+        {
+            return DefaultResponseMessage(requestMessage);
+        }
+        /// <summary>
+        /// Event事件类型请求之用户撤回
+        /// </summary>
+        /// <param name="requestMessage"></param>
+        /// <returns></returns>
+        public virtual IResponseMessageBase OnEvent_UserAuthorizationRevokeRequest(RequestMessageEvent_UserAuthorizationRevoke requestMessage)
+        {
+            return DefaultResponseMessage(requestMessage);
+        }
+        /// <summary>
+        /// Event事件类型请求之用户完成注销
+        /// </summary>
+        /// <param name="requestMessage"></param>
+        /// <returns></returns>
+        public virtual IResponseMessageBase OnEvent_UserAuthorizationCancellationRequest(RequestMessageEvent_UserAuthorizationCancellation requestMessage)
+        {
+            return DefaultResponseMessage(requestMessage);
+        }
+
+        /// <summary>
         /// Event事件类型请求之ENTER
         /// </summary>
         public virtual IResponseMessageBase OnEvent_EnterRequest(RequestMessageEvent_Enter requestMessage)
@@ -316,6 +357,15 @@ namespace Senparc.Weixin.MP.MessageHandlers
         /// </summary>
         /// <returns></returns>
         public virtual IResponseMessageBase OnEvent_MassSendJobFinishRequest(RequestMessageEvent_MassSendJobFinish requestMessage)
+        {
+            return DefaultResponseMessage(requestMessage);
+        }
+        
+        /// <summary>
+        /// 发布任务推送结果
+        /// </summary>
+        /// <returns></returns>
+        public virtual IResponseMessageBase OnEvent_PublishJobFinishRequest(RequestMessageEvent_PublishJobFinish requestMessage)
         {
             return DefaultResponseMessage(requestMessage);
         }

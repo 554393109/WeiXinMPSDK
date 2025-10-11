@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2023 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2025 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
   
     文件名：TenPayHttpHandler.cs
     文件功能描述：微信支付V3 HttpHandler
@@ -30,20 +30,20 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20210822
     修改描述：重构使用ISenparcWeixinSettingForTenpayV3初始化实例
 
+    修改标识：MartyZane - 20240530
+    修改描述：TenPayV3Setting里面增加AuthrizationType属性，用于设置认证类型，选项有WECHATPAY2-SHA256-RSA2048、WECHATPAY2-SM2-WITH-SM3，默认为WECHATPAY2-SM2-WITH-SM3
     
 ----------------------------------------------------------------*/
 
-using Senparc.Weixin.Entities;
-using Senparc.Weixin.TenPayV3.Helpers;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Security.Cryptography;
-using System.Text;
+using System.Reflection.Emit;
 using System.Threading;
 using System.Threading.Tasks;
+using Org.BouncyCastle.Crypto.Parameters;
+using Senparc.Weixin.Entities;
+using Senparc.Weixin.TenPayV3.Helpers;
 
 namespace Senparc.Weixin.TenPayV3
 {
@@ -73,6 +73,11 @@ namespace Senparc.Weixin.TenPayV3
             InnerHandler = new HttpClientHandler();
 
             _tenpayV3Setting = senparcWeixinSettingForTenpayV3 ?? Senparc.Weixin.Config.SenparcWeixinSetting.TenpayV3Setting;
+
+            if (!_tenpayV3Setting.EncryptionType.HasValue)
+            {
+                throw new Senparc.Weixin.Exceptions.WeixinException("没有设置证书加密类型（EncryptionType）");
+            }
         }
 
         /// <summary>
@@ -86,7 +91,13 @@ namespace Senparc.Weixin.TenPayV3
             CancellationToken cancellationToken)
         {
             var auth = await BuildAuthAsync(request);
-            string value = $"WECHATPAY2-SHA256-RSA2048 {auth}";
+
+            var authorizationValue =
+                _tenpayV3Setting.EncryptionType == CertType.SM
+                    ? "WECHATPAY2-SM2-WITH-SM3"
+                    : "WECHATPAY2-SHA256-RSA2048";
+
+            string value = $"{authorizationValue} {auth}";
             request.Headers.Add("Authorization", value);
 
             return await base.SendAsync(request, cancellationToken);
@@ -118,7 +129,21 @@ namespace Senparc.Weixin.TenPayV3
             //return $"mchid=\"{merchantId}\",nonce_str=\"{nonce}\",timestamp=\"{timestamp}\",serial_no=\"{serialNo}\",signature=\"{signature}\"";
 
             //TODO:此处重构使用ISenparcWeixinSettingForTenpayV3
-            string signature = TenPaySignHelper.CreateSign(message, _tenpayV3Setting.TenPayV3_PrivateKey);
+            string signature = string.Empty;
+            if (_tenpayV3Setting.EncryptionType == CertType.SM)
+            {
+                byte[] keyData = Convert.FromBase64String(_tenpayV3Setting.TenPayV3_PrivateKey);
+
+                ECPrivateKeyParameters eCPrivateKeyParameters = SMPemHelper.LoadPrivateKeyToParameters(keyData);
+
+                byte[] signBytes = GmHelper.SignSm3WithSm2(eCPrivateKeyParameters, message);
+
+                signature = Convert.ToBase64String(signBytes);
+            }
+            else
+            {
+                signature = TenPaySignHelper.CreateSign(_tenpayV3Setting.EncryptionType.Value, message, _tenpayV3Setting.TenPayV3_PrivateKey);
+            }
 
             return $"mchid=\"{_tenpayV3Setting.TenPayV3_MchId}\",nonce_str=\"{nonce}\",timestamp=\"{timestamp}\",serial_no=\"{_tenpayV3Setting.TenPayV3_SerialNumber}\",signature=\"{signature}\"";
         }

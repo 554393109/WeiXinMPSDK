@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2023 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2025 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
 
     文件名：AccessTokenContainer.cs
     文件功能描述：通用接口AccessToken容器，用于自动管理AccessToken，如果过期会重新获取
@@ -156,9 +156,9 @@ namespace Senparc.Weixin.Work.Containers
         /// <param name="corpId">corpId</param>
         /// <param name="corpSecret">corpSecret</param>
         /// 此接口无异步方法
-        public static string BuildingKey(string corpId, string corpSecret)
+        public static string BuildingKey(string corpId, string corpSecret, bool isAgentConfig=false)
         {
-            return string.Format("{0}@{1}", corpId, corpSecret);
+            return $"{corpId}@{corpSecret}{(isAgentConfig?$"@@AgentConfig" :null)}";
         }
 
         /// <summary>

@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2023 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2025 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
   
     文件名：TenPayHttpClient.cs
     文件功能描述：TenPayHttpClient
@@ -48,6 +48,7 @@ using Senparc.Weixin.TenPayV3.TenPayHttpClient.Verifier;
 using System;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -60,17 +61,17 @@ namespace Senparc.Weixin.TenPayV3.TenPayHttpClient
     {
         private readonly SenparcHttpClient _httpClient;
         private ISenparcWeixinSettingForTenpayV3 _tenpayV3Setting;
-        private readonly CertType _certType;
+        //private CertType CertType => _tenpayV3Setting.EncryptionType == "SM" ? CertType.SM : CertType.RSA;
 
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="senparcWeixinSettingForTenpayV3"></param>
-        public BasePayApis2(SenparcHttpClient httpClient, ISenparcWeixinSettingForTenpayV3 senparcWeixinSettingForTenpayV3 = null, CertType certType = CertType.RSA)
+        public BasePayApis2(SenparcHttpClient httpClient, ISenparcWeixinSettingForTenpayV3 senparcWeixinSettingForTenpayV3 = null/*, CertType certType = CertType.RSA*/)
         {
             this._httpClient = httpClient;
             _tenpayV3Setting = senparcWeixinSettingForTenpayV3 ?? Senparc.Weixin.Config.SenparcWeixinSetting.TenpayV3Setting;
-            this._certType = certType;
+            //this._certType = certType;
         }
 
         /// <summary>
@@ -95,7 +96,7 @@ namespace Senparc.Weixin.TenPayV3.TenPayHttpClient
         {
             var url = ReturnPayApiUrl(Senparc.Weixin.Config.TenPayV3Host + "/{0}v3/pay/transactions/jsapi");
 
-            HttpClient hc = null;//注入
+            //HttpClient hc = null;//注入
             TenPayHttpClient tenPayApiRequest = new(_httpClient, _tenpayV3Setting);
             return await tenPayApiRequest.SendAsync<JsApiReturnJson>(url, data, timeOut);
         }
@@ -108,16 +109,22 @@ namespace Senparc.Weixin.TenPayV3.TenPayHttpClient
         private readonly HttpClient _client;
         private readonly ISigner _signer;
         private readonly IVerifier _verifier;
+        private CertType CertType => _tenpayV3Setting.EncryptionType.Value;
 
-        public TenPayHttpClient(SenparcHttpClient httpClient, ISenparcWeixinSettingForTenpayV3 senparcWeixinSettingForTenpayV3 = null, CertType certType = CertType.RSA)
+        public TenPayHttpClient(SenparcHttpClient httpClient, ISenparcWeixinSettingForTenpayV3 senparcWeixinSettingForTenpayV3 = null)
         {
             this._httpClient = httpClient;
             this._client = this._httpClient.Client;
             _tenpayV3Setting = senparcWeixinSettingForTenpayV3 ?? Senparc.Weixin.Config.SenparcWeixinSetting.TenpayV3Setting;
 
+            if (!_tenpayV3Setting.EncryptionType.HasValue)
+            {
+                throw new Senparc.Weixin.Exceptions.WeixinException("没有设置证书加密类型（EncryptionType）");
+            }
+
             //从工厂获得签名和验签的方法类
-            _signer = TenPayCertFactory.GetSigner(certType);
-            _verifier = TenPayCertFactory.GetVerifier(certType);
+            _signer = TenPayCertFactory.GetSigner(CertType);
+            _verifier = TenPayCertFactory.GetVerifier(CertType);
 
             #region 配置UA
 
@@ -246,7 +253,7 @@ namespace Senparc.Weixin.TenPayV3.TenPayHttpClient
             try
             {
                 var pubKey = await TenPayV3InfoCollection.GetAPIv3PublicKeyAsync(this._tenpayV3Setting, wechatpaySerial);
-                return _verifier.Verify(wechatpayTimestamp, wechatpayNonce, wechatpaySignatureBase64, content, pubKey);
+                return _verifier.Verify(wechatpayTimestamp, wechatpayNonce, wechatpaySignatureBase64, content, pubKey, this._tenpayV3Setting.TenPayV3_TenPayPubKeyEnable);
             }
             catch (Exception ex)
             {

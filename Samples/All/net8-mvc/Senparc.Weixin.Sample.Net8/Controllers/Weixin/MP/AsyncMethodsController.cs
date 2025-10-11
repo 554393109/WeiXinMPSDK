@@ -1,5 +1,4 @@
-﻿//DPBMARK_FILE MP
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Senparc.CO2NET.Cache;
 using Senparc.CO2NET.Extensions;
 using Senparc.CO2NET.HttpUtility;
@@ -9,7 +8,7 @@ using Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage;
 using System;
 using System.Threading.Tasks;
 
-namespace Senparc.Weixin.Sample.Net6.Controllers
+namespace Senparc.Weixin.Sample.Net8.Controllers
 {
     public class AsyncMethodsController : BaseController
     {
@@ -62,7 +61,7 @@ namespace Senparc.Weixin.Sample.Net6.Controllers
                     keyword1 = new TemplateDataItem(openId),
                     keyword2 = new TemplateDataItem("网页测试"),
                     keyword3 = new TemplateDataItem(SystemTime.Now.ToString("O")),
-                    remark = new TemplateDataItem("更详细信息，请到Senparc.Weixin SDK官方网站（http://sdk.weixin.senparc.com）查看！")
+                    remark = new TemplateDataItem("更详细信息，请到Senparc.Weixin SDK官方网站（https://sdk.weixin.senparc.com）查看！")
                 };
 
                 var miniProgram = new TemplateModel_MiniProgram()

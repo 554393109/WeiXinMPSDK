@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2023 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2025 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：CodeApi.cs
     文件功能描述：代码管理
@@ -44,6 +44,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     修改标识：mc7246 - 20210930
     修改描述：v4.11.500 添加第三方代码提审资料上传接口
+
+    修改标识：JaneConan - 20241103
+    修改描述：v4.20.6 fix wxa ap is get qr code async Issue #3089, PR #3090
 
 ----------------------------------------------------------------*/
 
@@ -97,12 +100,13 @@ namespace Senparc.Weixin.Open.WxaAPIs
         /// <summary>
         /// 获取小程序的体验二维码
         /// </summary>
-        /// <param name="accessToken">从第三方平台获取到的该小程序授权</param>
+        /// <param name="accessToken">从第三方平台获取到的该小程序授权。第三方平台接口调用凭证authorizer_access_token，该参数为 URL 参数，非 Body 参数。（必填）</param>
+        /// <param name="path">指定二维码扫码后直接进入指定页面并可同时带上参数。（可选） </param>
         /// <param name="timeOut"></param>
         [NcApiBind(NeuChar.PlatformType.WeChat_OfficialAccount, "CodeApi.GetQRCode", true, ApiRequestMethod = CO2NET.WebApi.ApiRequestMethod.Get)]
-        public static CodeResultJson GetQRCode(string accessToken, Stream stream, int timeOut = Config.TIME_OUT)
+        public static CodeResultJson GetQRCode(string accessToken, string path, Stream stream, int timeOut = Config.TIME_OUT)
         {
-            var url = string.Format(Config.ApiMpHost + "/wxa/get_qrcode?access_token={0}", accessToken.AsUrlData());
+            var url = string.Format(Config.ApiMpHost + "/wxa/get_qrcode?access_token={0}&path={1}", accessToken.AsUrlData(), path.AsUrlData());
 
             Get.Download(CommonDI.CommonSP, url, stream);
             return new CodeResultJson()

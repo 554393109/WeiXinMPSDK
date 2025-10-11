@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：OAuth2Controller.cs
     文件功能描述：提供OAuth2.0授权测试（关注微信公众号：盛派网络小助手，点击菜单【功能体验】 【OAuth2.0授权测试】即可体验）
@@ -8,7 +8,6 @@
     创建标识：Senparc - 20150312
 ----------------------------------------------------------------*/
 
-//DPBMARK_FILE MP
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -25,13 +24,34 @@ using Senparc.Weixin.MP.CommonAPIs;
 using System.Text;
 using Senparc.Weixin.MP;
 
-namespace Senparc.Weixin.Sample.Net6.Controllers
+namespace Senparc.Weixin.Sample.Net8.Controllers
 {
     public class OAuth2Controller : BaseController
     {
         //下面换成账号对应的信息，也可以放入web.config等地方方便配置和更换
         public readonly string appId = Config.SenparcWeixinSetting.WeixinAppId;//与微信公众账号后台的AppId设置保持一致，区分大小写。
         private readonly string appSecret = Config.SenparcWeixinSetting.WeixinAppSecret;//与微信公众账号后台的AppId设置保持一致，区分大小写。
+
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public OAuth2Controller(IHttpContextAccessor httpContextAccessor)
+        {
+            this._httpContextAccessor = httpContextAccessor;
+        }
+
+        private string GetBaseUrl(HttpContext httpContext)
+        {
+            // 获取协议（例如，http 或 https）
+            string protocol = httpContext.Request.Scheme;
+
+            // 获取域名和端口（例如，example.com:5000）
+            string host = httpContext.Request.Host.ToString();
+
+            // 构造完整的协议+域名+端口
+            string baseUrl = $"{protocol}://{host}";
+
+            return baseUrl;
+        }
 
         /// <summary>
         /// 
@@ -45,14 +65,16 @@ namespace Senparc.Weixin.Sample.Net6.Controllers
 
             ViewData["returnUrl"] = returnUrl;
 
+            var baseUrl = GetBaseUrl(_httpContextAccessor.HttpContext);
+
             //此页面引导用户点击授权
             ViewData["UrlUserInfo"] =
                 OAuthApi.GetAuthorizeUrl(appId,
-                "http://sdk.weixin.senparc.com/oauth2/UserInfoCallback?returnUrl=" + returnUrl.UrlEncode(),
+                $"{baseUrl}/oauth2/UserInfoCallback?returnUrl=" + returnUrl.UrlEncode(),
                 state, OAuthScope.snsapi_userinfo);
             ViewData["UrlBase"] =
                 OAuthApi.GetAuthorizeUrl(appId,
-                "http://sdk.weixin.senparc.com/oauth2/BaseCallback?returnUrl=" + returnUrl.UrlEncode(),
+                $"{baseUrl}/oauth2/BaseCallback?returnUrl=" + returnUrl.UrlEncode(),
                 state, OAuthScope.snsapi_base);
             return View();
         }

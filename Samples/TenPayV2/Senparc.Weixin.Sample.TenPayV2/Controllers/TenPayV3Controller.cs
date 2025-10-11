@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：TenPayV3Controller.cs
     文件功能描述：微信支付V3Controller
@@ -21,7 +21,6 @@
  * 微信真正微信支付 API V3 的示例请见 TenPayApiV3Controller 
  */
 
-//DPBMARK_FILE TenPay
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Senparc.CO2NET.Extensions;
@@ -44,7 +43,7 @@ using ZXing;
 using ZXing.Common;
 using TenPayOldV3 = Senparc.Weixin.TenPay.V3.TenPayV3;
 
-//DPBMARK MP
+
 using Senparc.Weixin.MP;
 using Senparc.Weixin.MP.AdvancedAPIs;
 using Senparc.Weixin.Sample.TenPayV2.Filters;
@@ -111,7 +110,7 @@ namespace Senparc.Weixin.Sample.TenPayV2.Controllers
             var state = string.Format("{0}|{1}", productId, hc);
             string url = null;
 
-            url = OAuthApi.GetAuthorizeUrl(TenPayV3Info.AppId, returnUrl, state, OAuthScope.snsapi_userinfo);//   -- DPBMARK MP DPBMARK_END
+            url = OAuthApi.GetAuthorizeUrl(TenPayV3Info.AppId, returnUrl, state, OAuthScope.snsapi_userinfo);//
 
             if (url.IsNullOrEmpty())
             {
@@ -120,7 +119,7 @@ namespace Senparc.Weixin.Sample.TenPayV2.Controllers
             return Redirect(url);
         }
 
-        //DPBMARK MP
+        
         #region JsApi支付
 
         public ActionResult OAuthCallback(string code, string state, string returnUrl)
@@ -1016,7 +1015,7 @@ namespace Senparc.Weixin.Sample.TenPayV2.Controllers
                 return Content("商品信息不存在，或非法进入！2004");
             }
 
-            var url = string.Format("http://sdk.weixin.senparc.com/TenPayV3/JsApi?productId={0}&hc={1}&t={2}", productId,
+            var url = string.Format("https://sdk.weixin.senparc.com/TenPayV3/JsApi?productId={0}&hc={1}&t={2}", productId,
                 product.GetHashCode(), SystemTime.Now.Ticks);
 
             BitMatrix bitMatrix;
@@ -1049,7 +1048,7 @@ namespace Senparc.Weixin.Sample.TenPayV2.Controllers
 
         #endregion
 
-        //DPBMARK MP
+        
         #region H5支付
 
         /// <summary>

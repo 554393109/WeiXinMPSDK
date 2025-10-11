@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2023 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2025 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：SnsApi.cs
     文件功能描述：小程序 Sec下接口
@@ -28,6 +28,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     修改标识：Senparc - 20230905
     修改描述：v4.15.0 完善“第三方服务商小程序备案”接口
+
+    修改标识：Guili95 - 20240623
+    修改描述：v3.19.0 添加小程序发货信息管理服务-查询小程序是否已完成交易结算管理确认接口
 
 ----------------------------------------------------------------*/
 
@@ -205,6 +208,27 @@ namespace Senparc.Weixin.WxOpen.AdvancedAPIs.Sec
 
             }, accessTokenOrAppId);
         }
+
+        /// <summary>
+        /// 查询小程序是否已完成交易结算管理确认
+        /// </summary>
+        /// <param name="accessTokenOrAppId"></param>
+        /// <param name="appid"></param>
+        /// <param name="timeOut"></param>
+        /// <returns></returns>
+        public static IsTradeManagementConfirmationCompletedJsonResult IsTradeManagementConfirmationCompleted(string accessTokenOrAppId, string appid, int timeOut = Config.TIME_OUT)
+        {
+            return WxOpenApiHandlerWapper.TryCommonApi(accessToken =>
+            {
+                string urlFormat = Config.ApiMpHost + "/wxa/sec/order/is_trade_management_confirmation_completed?access_token={0}";
+                var postBody = new
+                {
+                    appid
+                };
+                return CommonJsonSend.Send<IsTradeManagementConfirmationCompletedJsonResult>(accessToken, urlFormat, postBody, timeOut: timeOut);
+
+            }, accessTokenOrAppId);
+        }
         #endregion
 
         #region 异步方法
@@ -356,6 +380,27 @@ namespace Senparc.Weixin.WxOpen.AdvancedAPIs.Sec
                     appid
                 };
                 return await CommonJsonSend.SendAsync<IsTradeManagedJsonResult>(accessToken, urlFormat, postBody, timeOut: timeOut);
+
+            }, accessTokenOrAppId).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// 【异步方法】查询小程序是否已完成交易结算管理确认
+        /// </summary>
+        /// <param name="accessTokenOrAppId"></param>
+        /// <param name="appid"></param>
+        /// <param name="timeOut"></param>
+        /// <returns></returns>
+        public static async Task<IsTradeManagementConfirmationCompletedJsonResult> IsTradeManagementConfirmationCompletedAsync(string accessTokenOrAppId, string appid, int timeOut = Config.TIME_OUT)
+        {
+            return await WxOpenApiHandlerWapper.TryCommonApiAsync(async accessToken =>
+            {
+                string urlFormat = Config.ApiMpHost + "/wxa/sec/order/is_trade_management_confirmation_completed?access_token={0}";
+                var postBody = new
+                {
+                    appid
+                };
+                return await CommonJsonSend.SendAsync<IsTradeManagementConfirmationCompletedJsonResult>(accessToken, urlFormat, postBody, timeOut: timeOut);
 
             }, accessTokenOrAppId).ConfigureAwait(false);
         }

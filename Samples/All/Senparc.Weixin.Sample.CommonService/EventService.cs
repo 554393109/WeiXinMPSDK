@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：EventService.cs
     文件功能描述：事件处理程序，此代码的简化MessageHandler方法已由/CustomerMessageHandler/CustomerMessageHandler_Event.cs完成
@@ -19,7 +19,7 @@ using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Helpers;
 using Senparc.CO2NET.Utilities;
 using Senparc.CO2NET.Trace;
-//DPBMARK MP
+
 using Senparc.Weixin.MP.Entities;
 using Senparc.Weixin.MP.Helpers;
 using Senparc.Weixin.MP;
@@ -27,10 +27,10 @@ using Senparc.Weixin.MP;
 #if NET462
 using System.Web;
 using System.Configuration;
-using Senparc.Weixin.Sample.CommonService.TemplateMessage;//DPBMARK MP DPBMARK_END
+using Senparc.Weixin.Sample.CommonService.TemplateMessage;
 #else
 using Microsoft.AspNetCore.Http;
-using Senparc.Weixin.Sample.CommonService.TemplateMessage;//DPBMARK MP DPBMARK_END
+using Senparc.Weixin.Sample.CommonService.TemplateMessage;
 #endif
 
 
@@ -196,7 +196,7 @@ namespace Senparc.Weixin.Sample.CommonService
                             Senparc.Weixin.WeixinTrace.SendCustomLog("异常模板消息发送过程中再次失败", result.Exception?.Message + "\r\n" + result.Exception?.StackTrace);
                         }
                     }
-                }                           // DPBMARK_END
+                }
             }
             catch (Exception e)
             {

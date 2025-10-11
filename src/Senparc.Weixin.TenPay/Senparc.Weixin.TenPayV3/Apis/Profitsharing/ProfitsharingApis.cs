@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2023 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2025 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
   
     文件名：ProfitsharingApis.cs
     文件功能描述：微信支付V3分账接口
@@ -111,16 +111,24 @@ namespace Senparc.Weixin.TenPayV3.Apis
 
             // name加密
             var basePayApis = new BasePayApis();
-            var certificateResponse = await basePayApis.CertificatesAsync();
+            var publicKeys = await basePayApis.GetPublicKeysAsync();
+            var publicKeyKv = publicKeys.FirstOrDefault();
             foreach (var each in data.receivers)
             {
-                SecurityHelper.FieldEncrypt(each, certificateResponse, _tenpayV3Setting.TenPayV3_APIv3Key);
+                SecurityHelper.FieldEncrypt(each, publicKeyKv.Value, _tenpayV3Setting.EncryptionType.Value, _tenpayV3Setting.TenPayV3_TenPayPubKeyEnable);
             }
+
+            //string algorithmType = _tenpayV3Setting.EncryptionType == CertType.SM.ToString() ? "SM2" : "RSA";
+            //var certificateResponse = await basePayApis.CertificatesAsync(algorithmType);
+            //foreach (var each in data.receivers)
+            //{
+            //    SecurityHelper.FieldEncrypt(each, certificateResponse, _tenpayV3Setting.TenPayV3_APIv3Key, _tenpayV3Setting.EncryptionType);
+            //}
 
             var url = ReurnPayApiUrl(Senparc.Weixin.Config.TenPayV3Host + "/{0}v3/{1}profitsharing/orders", data.brand_mchid);
             TenPayApiRequest tenPayApiRequest = new(_tenpayV3Setting, httpClient =>
             {
-                httpClient.DefaultRequestHeaders.Add("Wechatpay-Serial", certificateResponse.data?.FirstOrDefault()?.serial_no);
+                httpClient.DefaultRequestHeaders.Add("Wechatpay-Serial", publicKeyKv.Key);
             });
             return await tenPayApiRequest.RequestAsync<CreateProfitsharingReturnJson>(url, data, timeOut);
         }
@@ -314,13 +322,18 @@ namespace Senparc.Weixin.TenPayV3.Apis
 
             // name加密
             var basePayApis = new BasePayApis();
-            var certificateResponse = await basePayApis.CertificatesAsync();
-            SecurityHelper.FieldEncrypt(data, certificateResponse, _tenpayV3Setting.TenPayV3_APIv3Key);
+            var publicKeys = await basePayApis.GetPublicKeysAsync();
+            var publicKeyKv = publicKeys.FirstOrDefault();
+            SecurityHelper.FieldEncrypt(data, publicKeyKv.Value, _tenpayV3Setting.EncryptionType.Value, _tenpayV3Setting.TenPayV3_TenPayPubKeyEnable);
+
+            //string algorithmType = _tenpayV3Setting.EncryptionType == CertType.SM.ToString() ? "SM2" : "RSA";
+            //var certificateResponse = await basePayApis.CertificatesAsync(algorithmType);
+            //SecurityHelper.FieldEncrypt(data, certificateResponse, _tenpayV3Setting.TenPayV3_APIv3Key, _tenpayV3Setting.EncryptionType);
 
             var url = ReurnPayApiUrl(Senparc.Weixin.Config.TenPayV3Host + "/{0}v3/{1}profitsharing/receivers/add", data.brand_mchid);
             TenPayApiRequest tenPayApiRequest = new(_tenpayV3Setting, httpClient =>
             {
-                httpClient.DefaultRequestHeaders.Add("Wechatpay-Serial", certificateResponse.data?.FirstOrDefault()?.serial_no);
+                httpClient.DefaultRequestHeaders.Add("Wechatpay-Serial", publicKeyKv.Key);
             });
             return await tenPayApiRequest.RequestAsync<AddProfitsharingReceiverReturnJson>(url, data, timeOut);
         }

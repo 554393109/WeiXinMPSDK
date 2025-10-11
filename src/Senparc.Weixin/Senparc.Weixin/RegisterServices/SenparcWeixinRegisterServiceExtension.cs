@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2023 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2025 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
 
     文件名：RegisterServiceExtension.cs
     文件功能描述：快捷注册类，RegisterService 扩展类
@@ -67,7 +67,7 @@ namespace Senparc.Weixin.RegisterServices
         /// <param name="serviceCollection">IServiceCollection</param>
         /// <param name="configuration">IConfiguration</param>
         /// <returns></returns>
-        public static IServiceCollection AddSenparcWeixinServices(this IServiceCollection serviceCollection, IConfiguration configuration, Action addCertHttpClient = null)
+        public static IServiceCollection AddSenparcWeixin(this IServiceCollection serviceCollection, IConfiguration configuration, Action addCertHttpClient = null)
         {
             serviceCollection.Configure<SenparcWeixinSetting>(configuration.GetSection("SenparcWeixinSetting"));
 
@@ -143,6 +143,17 @@ namespace Senparc.Weixin.RegisterServices
   }
   */
             #endregion
+        }
+
+        /// <summary>
+        /// 注册 IServiceCollection，并返回 RegisterService，开始注册流程
+        /// </summary>
+        /// <param name="serviceCollection">IServiceCollection</param>
+        /// <param name="configuration">IConfiguration</param>
+        /// <returns></returns>
+        public static IServiceCollection AddSenparcWeixinServices(this IServiceCollection serviceCollection, IConfiguration configuration, Action addCertHttpClient = null)
+        {
+            return AddSenparcWeixin(serviceCollection, configuration, addCertHttpClient);
         }
 
 

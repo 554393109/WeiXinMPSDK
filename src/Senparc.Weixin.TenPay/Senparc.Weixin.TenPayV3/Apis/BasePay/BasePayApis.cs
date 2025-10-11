@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2023 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2025 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
   
     文件名：BasePayApis.cs
     文件功能描述：新微信支付V3基础接口
@@ -51,6 +51,8 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20230112
     修改描述：v0.6.8.8 修复 RefundQueryAsync() URL 问题
 
+    修改标识：mojinxun - 20250618
+    修改描述：v2.1.0 兼容微信平台证书和微信支付公钥 / PR #3144
 ----------------------------------------------------------------*/
 
 using Senparc.CO2NET.Helpers;
@@ -81,6 +83,10 @@ namespace Senparc.Weixin.TenPayV3.Apis
         {
             _tenpayV3Setting = senparcWeixinSettingForTenpayV3 ?? Senparc.Weixin.Config.SenparcWeixinSetting.TenpayV3Setting;
 
+            if (!_tenpayV3Setting.EncryptionType.HasValue)
+            {
+                throw new Senparc.Weixin.Exceptions.WeixinException("没有设置证书加密类型（EncryptionType）");
+            }
         }
 
         //private readonly IServiceProvider _serviceProvider;
@@ -108,11 +114,19 @@ namespace Senparc.Weixin.TenPayV3.Apis
         /// <summary>
         /// 获取平台证书
         /// </summary>
+        /// <param name="algorithmType">
+        /// SM2：获取国密算法的平台证书
+        /// RSA：获取RSA算法的平台证书
+        /// ALL：获取所有类型的平台证书
+        /// 不填：默认获取RSA算法的平台证书
+        /// </param>
         /// <param name="timeOut"></param>
         /// <returns></returns>
-        public async Task<CertificatesResultJson> CertificatesAsync(int timeOut = Config.TIME_OUT)
+        public async Task<CertificatesResultJson> CertificatesAsync(CertType algorithmType, int timeOut = Config.TIME_OUT)
         {
-            var url = BasePayApis.GetPayApiUrl(Senparc.Weixin.Config.TenPayV3Host + "/{0}v3/certificates");
+            var algorithmTypeStr = algorithmType == CertType.SM ? "SM2" : algorithmType.ToString();
+
+            var url = GetPayApiUrl(Senparc.Weixin.Config.TenPayV3Host + "/{0}v3/certificates?algorithm_type=" + algorithmTypeStr);
             TenPayApiRequest tenPayApiRequest = new(_tenpayV3Setting);
             //var responseMessge = await tenPayApiRequest.GetHttpResponseMessageAsync(url, null, timeOut);
             //return await responseMessge.Content.ReadAsStringAsync();
@@ -126,25 +140,42 @@ namespace Senparc.Weixin.TenPayV3.Apis
         /// <returns></returns>
         public async Task<PublicKeyCollection> GetPublicKeysAsync(/*int timeOut = Config.TIME_OUT*/)
         {
-            var certificates = await CertificatesAsync();
+            PublicKeyCollection keys = new();
+
+            if (!string.IsNullOrWhiteSpace(_tenpayV3Setting.TenPayV3_TenPayPubKeyID))
+            {
+                keys[_tenpayV3Setting.TenPayV3_TenPayPubKeyID] = SecurityHelper.GetUnwrapCertKey(_tenpayV3Setting.TenPayV3_TenPayPubKey);
+            }
+
+            var certificates = await CertificatesAsync(_tenpayV3Setting.EncryptionType.Value);
             if (!certificates.ResultCode.Success)
             {
-                throw new TenpayApiRequestException("获取证书公钥失败：" + certificates.ResultCode.ErrorMessage);
+                return keys;
+                //throw new TenpayApiRequestException("获取证书公钥失败：" + certificates.ResultCode.ErrorMessage);
             }
 
             if (certificates.data?.Length == 0)
             {
-                throw new TenpayApiRequestException("Certificates 获取结果为空");
+                return keys;
+                //throw new TenpayApiRequestException("Certificates 获取结果为空");
             }
 
-            PublicKeyCollection keys = new();
             //var tenpayV3Setting = Senparc.Weixin.Config.SenparcWeixinSetting.TenpayV3Setting;//TODO:改成从构造函数配置
 
             foreach (var cert in certificates.data)
             {
-                var publicKey = SecurityHelper.AesGcmDecryptCiphertext(_tenpayV3Setting.TenPayV3_APIv3Key, cert.encrypt_certificate.nonce,
+                if (cert.encrypt_certificate.algorithm == "AEAD_AES_256_GCM")
+                {
+                    var publicKey = SecurityHelper.AesGcmDecryptCiphertext(_tenpayV3Setting.TenPayV3_APIv3Key, cert.encrypt_certificate.nonce,
                                     cert.encrypt_certificate.associated_data, cert.encrypt_certificate.ciphertext);
-                keys[cert.serial_no] = SecurityHelper.GetUnwrapCertKey(publicKey);
+                    keys[cert.serial_no] = SecurityHelper.GetUnwrapCertKey(publicKey);
+                }
+                else
+                {
+                    var publicKey = GmHelper.Sm4DecryptGCM(_tenpayV3Setting.TenPayV3_APIv3Key, cert.encrypt_certificate.nonce,
+                                    cert.encrypt_certificate.associated_data, cert.encrypt_certificate.ciphertext);
+                    keys[cert.serial_no] = SecurityHelper.GetUnwrapCertKey(publicKey);
+                }
             }
             return keys;
         }

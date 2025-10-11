@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2023 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2025 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
   
     文件名：Enums.cs
     文件功能描述：枚举类型
@@ -175,6 +175,11 @@ namespace Senparc.Weixin.MP
         /// 事件推送群发结果
         /// </summary>
         MASSSENDJOBFINISH,
+
+        /// <summary>
+        /// 发布任务结果
+        /// </summary>
+        PUBLISHJOBFINISH,
 
         /// <summary>
         /// 模板信息发送完成
@@ -425,6 +430,19 @@ namespace Senparc.Weixin.MP
         /// </summary>
         subscribe_msg_sent_event,
         #endregion
+
+        /// <summary>
+        /// 用户资料变更
+        /// </summary>
+        user_info_modified,
+        /// <summary>
+        /// 用户撤回
+        /// </summary>
+        user_authorization_revoke,
+        /// <summary>
+        /// 用户完成注销
+        /// </summary>
+        user_authorization_cancellation,
     }
 
 

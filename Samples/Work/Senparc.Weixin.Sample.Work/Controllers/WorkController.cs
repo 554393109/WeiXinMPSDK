@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------
-    Copyright (C) 2023 Senparc
+    Copyright (C) 2025 Senparc
     
     文件名：WorkController.cs
     文件功能描述：企业号对接测试（从QYController.cs移植）
@@ -22,7 +22,6 @@
  */
 
 
-//DPBMARK_FILE Work
 using Microsoft.AspNetCore.Mvc;
 using Senparc.CO2NET.AspNet.HttpUtility;
 using Senparc.CO2NET.Utilities;
@@ -31,7 +30,7 @@ using Senparc.Weixin.Sample.Work.MessageHandlers;
 using Senparc.Weixin.Work;
 using Senparc.Weixin.Work.Entities;
 
-namespace Senparc.Weixin.Sample.Net6.Controllers
+namespace Senparc.Weixin.Sample.Net8.Controllers
 {
     /// <summary>
     /// 企业号对接测试
@@ -48,7 +47,7 @@ namespace Senparc.Weixin.Sample.Net6.Controllers
         }
 
         /// <summary>
-        /// 微信后台验证地址（使用Get），企业微信后台应用的“修改配置”的Url填写如：http://sdk.weixin.senparc.com/work
+        /// 微信后台验证地址（使用Get），企业微信后台应用的“修改配置”的Url填写如：https://sdk.weixin.senparc.com/work
         /// </summary>
         [HttpGet]
         [ActionName("Index")]
@@ -67,7 +66,7 @@ namespace Senparc.Weixin.Sample.Net6.Controllers
         }
 
         /// <summary>
-        /// 微信后台验证地址（使用Post），企业微信后台应用的“修改配置”的Url填写如：http://sdk.weixin.senparc.com/work
+        /// 微信后台验证地址（使用Post），企业微信后台应用的“修改配置”的Url填写如：https://sdk.weixin.senparc.com/work
         /// </summary>
         [HttpPost]
         [ActionName("Index")]
